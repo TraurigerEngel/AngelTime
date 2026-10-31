@@ -1,0 +1,1306 @@
+:root{color-scheme:dark;font-family:"Segoe UI Variable Text","Segoe UI",Arial,sans-serif;--bg:#0c0a17;--panel:#161225;--border:#2b233f;--muted:#8e849f;--text:#f5f1fb;--lilac:#bf97fa;--pink:#f49bdd;--gold:#f0ca8e;--primary:#ae76f3}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);overflow:hidden}button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:3px}.hidden{display:none!important}.mono{font-variant-numeric:tabular-nums;font-family:"Segoe UI Variable Display","Segoe UI",sans-serif}
+.app-shell{display:grid;grid-template-columns:247px minmax(0,1fr);height:100vh;min-height:0;background:radial-gradient(ellipse at 75% -36%,#241237 0%,transparent 46%),var(--bg)}.sidebar{border-right:1px solid #282036;background:#100d1e;display:flex;flex-direction:column;padding:29px 16px 20px}.brand{display:flex;align-items:center;gap:11px;padding:0 9px}.brand-mark{width:44px;height:44px;border-radius:15px;background:linear-gradient(145deg,#3a244f,#211a37);border:1px solid #5c426c;display:grid;place-items:center}.brand-name{font-weight:800;font-size:21px;letter-spacing:-.8px}.brand-name span{color:#f0a2de}.brand-sub{font-size:11px;color:var(--muted);margin-top:3px}.sidebar-section{margin:48px 15px 13px;font-size:10px;font-weight:800;color:#786987;letter-spacing:2px}.nav{display:grid;gap:9px}.nav-item{border:1px solid transparent;background:transparent;color:#a69bb6;border-radius:12px;padding:15px 12px;display:flex;align-items:center;gap:14px;font-size:14px;font-weight:600;text-align:left}.nav-item svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-item span:nth-child(2){flex:1}.nav-item:hover{background:#20182f;color:#eee3fa}.nav-item.active{border-color:#5e3c74;color:#fad3f5;background:linear-gradient(95deg,#422350,#2b203d)}.nav-item.active svg{color:#f2a0e4}.nav-count{font-size:11px;background:#5b345b;border-radius:8px;min-width:24px;text-align:center;padding:4px 3px}.sidebar-bottom{margin-top:auto}.aside-clock{border-radius:16px;border:1px solid #3a2c48;background:linear-gradient(135deg,#281831,#171325);padding:20px 18px}.aside-clock-label{font-size:10px;font-weight:800;letter-spacing:2px;color:var(--gold)}.aside-clock-time{font-size:40px;font-weight:750;letter-spacing:1px;margin:7px 0 1px}.aside-clock-date{font-size:12px;color:#b5a9c3}.aside-hint{display:flex;align-items:center;gap:9px;color:#b1a5c0;margin:20px 4px 14px;font-size:11px}.status-dot{width:7px;height:7px;background:#86d9a0;border-radius:50%;box-shadow:0 0 0 3px #2b4237}.sidebar-version{color:#756c82;font-size:11px;margin:0 4px}.sidebar-version span{color:#c398e7}
+.main{min-width:0;padding:0 28px;position:relative;display:flex;flex-direction:column;overflow:hidden}.topline{height:63px;flex-shrink:0;border-bottom:1px solid #241c34;display:flex;align-items:center;justify-content:space-between}.breadcrumbs{font-size:11px;font-weight:800;color:#dbc5f4;letter-spacing:.8px}.crumb{color:#81728f}.slash{margin:0 12px;color:#463750}.top-right{font-size:11px;color:#8c7c9e}.top-star{color:var(--gold);font-size:16px;margin-right:6px}.tab-panel{display:none;min-height:0;flex:1;overflow:hidden;padding-top:22px}.tab-panel.active{display:block}.eyebrow{font-weight:800;letter-spacing:2px;font-size:10px;color:var(--gold);margin-bottom:7px}.page-title{display:flex;align-items:center;justify-content:space-between;min-height:82px;margin-bottom:16px}.page-title h1{font-size:33px;letter-spacing:-1.2px;margin:0 0 4px;font-weight:750}.page-title p{font-size:12px;color:#a89db6;margin:0}.btn{border-radius:11px;min-height:42px;padding:0 20px;border:1px solid #554365;color:#e7daf5;background:#241b34;font-size:13px;font-weight:750;transition:background .15s,transform .15s;white-space:nowrap}.btn:active{transform:translateY(1px)}.btn:disabled{opacity:.47;cursor:default}.btn-primary{border:1px solid #cb8ff2;color:#200d2f;background:linear-gradient(110deg,#eeb0e8,#bd86fc);box-shadow:0 3px 10px #02010630}.btn-primary:hover:not(:disabled){background:linear-gradient(110deg,#f5c7ee,#d4a8ff)}.btn-neutral:hover{background:#382a4d}.btn-ghost{background:transparent;border-color:#3c304a}.add-alarm{min-width:176px}.plus{font-size:19px;vertical-align:-1px;margin-right:4px}.hero{height:155px;border:1px solid #62436f;border-radius:18px;background:radial-gradient(ellipse at 85% 28%,#65366d85 0%,transparent 45%),linear-gradient(112deg,#2e1d42,#21172f);padding:23px 30px;display:flex;align-items:center;justify-content:space-between;overflow:hidden}.hero-kicker{display:flex;align-items:center;gap:9px;color:#e8c48e;font-weight:800;font-size:10px;letter-spacing:1.8px}.gold-line{width:18px;height:2px;background:#e8bc75}.hero-digital{font-size:64px;font-weight:750;letter-spacing:1px;line-height:1.11;margin:5px 0;color:#f8eaff}.hero-digital span{font-size:31px;color:#ca9feb}.hero-caption{font-size:13px;color:#b5a1c5}.hero-right{width:167px;height:138px;position:relative;display:grid;place-items:center}.hero-orbit{position:absolute;width:154px;height:154px;border:2px solid #b37ccc33;border-radius:50%;box-shadow:inset 0 0 0 15px #b27bcc0a,0 0 0 20px #c98bea08}.hero-orbit:before{content:"";display:block;position:absolute;inset:22px;border:1px dashed #f0c58a55;border-radius:50%}.orbit-dot{position:absolute;top:13px;right:18px;width:12px;height:12px;border-radius:50%;background:#ffcca9;box-shadow:0 0 0 7px #e4afbf2a}
+.list-head{display:flex;align-items:center;justify-content:space-between;margin:22px 0 13px}.list-head h2{font-size:16px;letter-spacing:-.2px;margin:0 0 5px}.counter-pill{font-size:11px;color:#d5a9f4;background:#3b2850;padding:3px 8px;border-radius:11px;vertical-align:1px;margin-left:6px}.section-caption{font-size:11px;color:#9386a3}.page-nav{display:flex;align-items:center;gap:10px;color:#8f809e;font-size:11px}.icon-btn{background:#21192f;color:#d7c1ef;border:1px solid #41334e;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:23px;line-height:1;padding:0 0 3px}.icon-btn:disabled{opacity:.35}.alarm-list{height:212px;display:grid;grid-template-rows:repeat(4,46px);gap:7px;overflow:hidden}.alarm-item{display:flex;align-items:center;background:#181326;border:1px solid #32263f;border-radius:11px;padding:0 13px;gap:12px;min-width:0}.alarm-item.disabled{opacity:.56}.alarm-time{font-size:24px;font-weight:760;min-width:78px;color:#f1e6fc}.alarm-info{min-width:0;flex:1}.alarm-info strong{display:block;font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.alarm-info small{display:block;color:#9586a8;font-size:10px;margin-top:3px}.alarm-buttons{display:flex;gap:7px;align-items:center}.mini-btn{background:transparent;border:1px solid #433351;border-radius:8px;color:#cfbddd;width:29px;height:29px;font-size:15px}.mini-btn:hover{background:#3b2b48}.toggle{width:37px;height:21px;border-radius:20px;background:#3a3246;border:1px solid #685779;position:relative;display:block;flex-shrink:0;padding:0}.toggle:after{content:"";position:absolute;left:3px;top:3px;width:13px;height:13px;border-radius:50%;background:#b7a9c4;transition:left .15s}.toggle.on{background:#af75ee;border-color:#c69af5}.toggle.on:after{left:19px;background:#fff}.empty{height:100%;grid-row:1/5;display:grid;place-content:center;text-align:center;gap:9px;color:#857594;border:1px dashed #403149;border-radius:12px;font-size:12px}.empty span{font-size:26px;color:#c58fdf}.footer{border-top:1px solid #241c34;height:43px;display:flex;gap:11px;align-items:center;font-size:10px;color:#8b7c99;flex-shrink:0}.footer>span:first-child{color:var(--gold);font-size:17px}
+.head-icon{width:57px;height:57px;border:1px solid #463352;background:#261934;border-radius:15px;display:grid;place-items:center;font-size:29px;color:#e5b4ec}.timer-layout{display:grid;grid-template-columns:47% 53%;gap:0;height:385px;margin-top:23px}.timer-left{border:1px solid #3a2d47;background:linear-gradient(155deg,#20182d,#171222);padding:27px 22px;border-radius:17px 0 0 17px}.input-title{font-size:10px;letter-spacing:1.6px;color:#d5aedc;font-weight:850}.timer-inputs{display:flex;align-items:flex-end;gap:7px;margin-top:15px}.timer-inputs label{font-size:10px;color:#9381a7;font-weight:800;text-align:center;letter-spacing:1px;flex:1;min-width:0}.timer-inputs input{margin-top:9px;width:100%;height:64px;border:1px solid #51405e;background:#110e1c;border-radius:10px;font-size:33px;color:#f8ecff;font-weight:760;min-width:0;text-align:center;outline:none;appearance:textfield;-moz-appearance:textfield}.timer-inputs input:disabled{opacity:.55}.timer-inputs input::-webkit-inner-spin-button{-webkit-appearance:none}.time-sep{font-size:24px;color:#8864a9;padding-bottom:18px}.presets-label{margin-top:32px}.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:14px}.presets button{border:1px solid #4d3a5a;background:#251d34;color:#c9bad7;padding:11px 0;border-radius:8px;font-weight:750;font-size:11px}.presets button.selected{border-color:#be8cf0;background:#3e2c52;color:#f2d7ff}.presets button:disabled{opacity:.45}.timer-note{margin-top:24px;color:#988da9;font-size:11px;line-height:1.7}.timer-right{border:1px solid #392b47;border-left:0;background:radial-gradient(ellipse at 50% 45%,#2d1c41 0%,#161122 70%);border-radius:0 17px 17px 0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px}.timer-ring{width:236px;height:236px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(#eab5e9 0deg,#a97af5 0deg,#44314e 0deg);padding:7px;position:relative;box-shadow:0 0 0 10px #36254520}.ring-inner{width:100%;height:100%;border-radius:50%;display:flex;justify-content:center;align-items:center;flex-direction:column;background:radial-gradient(circle,#20162f,#171222)}.ring-label,.ring-status{font-size:10px;letter-spacing:1.6px;color:#ba9dd0;font-weight:800}.ring-time{font-size:30px;font-weight:800;letter-spacing:-.6px;margin:12px 0;color:#f6ecfd}.ring-status{letter-spacing:0;font-weight:600;color:#d6b5df}.actions{display:flex;gap:11px}.actions .btn{min-width:131px}.stopwatch-display{background:radial-gradient(ellipse at 48% 10%,#3e254b 0%,#22172f 58%,#181321 100%);border:1px solid #694275;border-radius:17px;text-align:center;padding:27px 15px;height:208px;margin-top:17px}.timer-small-kicker{font-size:10px;color:#e4bd92;font-weight:850;letter-spacing:2px}.stopwatch-digits{font-size:64px;font-weight:800;letter-spacing:-1.1px;line-height:1.1;margin:10px 0 15px}.stopwatch-digits span{font-size:38px;color:#e9aedf}.stopwatch-actions{display:flex;gap:10px;justify-content:center}.stopwatch-actions .btn{min-width:132px}.laps-head{margin-top:24px}.lap-list{display:grid;grid-template-rows:repeat(4,36px);gap:6px;height:162px}.lap-item{display:flex;align-items:center;justify-content:space-between;background:#171324;border:1px solid #34273e;border-radius:9px;padding:0 13px}.lap-label{font-size:12px;color:#b3a2c2}.lap-label strong{color:#eee0fa;margin-left:8px}.lap-time{font-size:16px;font-weight:750;color:#dfc6f3}.tiny-empty{grid-row:1/5}
+.overlay{position:fixed;inset:0;z-index:20;background:#090611d9;display:grid;place-items:center}.dialog{width:440px;background:linear-gradient(150deg,#261b35,#161124);border:1px solid #7b538c;border-radius:20px;box-shadow:0 20px 90px #000b;padding:26px}.dialog-heading{display:flex;justify-content:space-between;align-items:flex-start}.dialog h2{font-size:25px;margin:2px 0 19px}.close-dialog{background:transparent;border:0;color:#cbb4dd;font-size:29px;padding:0 4px}.field-label{display:block;font-size:11px;color:#c7adcf;font-weight:700;letter-spacing:.6px;margin:12px 0 8px}.time-field,.text-field{width:100%;height:46px;background:#110e1d;border:1px solid #594366;border-radius:10px;color:#f6effb;padding:0 12px;color-scheme:dark}.time-field{font-size:25px;font-weight:700}.text-field{font-size:13px}.weekday-list{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.weekday-list button{border:1px solid #574465;border-radius:9px;background:#241c32;color:#ccbadb;font-weight:750;font-size:12px;height:38px}.weekday-list button[aria-pressed="true"]{background:#aa75ed;color:#21112d;border-color:#cda4f8}.once-hint{font-size:11px;color:#9483a2;margin-top:10px}.dialog-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:25px}.alert-dialog{text-align:center}.alert-symbol{height:72px;width:72px;border-radius:50%;background:#4a2958;color:#f4c6ed;font-size:38px;display:grid;place-items:center;margin:0 auto 12px}.alert-dialog h2{margin:0;font-size:28px}.alert-dialog p{margin:12px 0 20px;color:#cdb7da}.alert-dialog .dialog-actions{justify-content:center}.toast{position:fixed;z-index:50;right:22px;bottom:22px;background:#3f2245;color:#ffedf8;border:1px solid #b876ba;padding:13px 16px;border-radius:10px;max-width:450px;font-size:12px;box-shadow:0 10px 30px #0008}
+
+.lap-time{display:flex;align-items:center;gap:23px}.lap-time small{font-size:11px;color:#9184a2;font-weight:600}
+
+/* v0.2.0 — interface / interaction refinements */
+.nav-item{transition:background-color .15s,border-color .15s,color .15s}
+.nav-item.active{box-shadow:inset 3px 0 0 #f0b6e5}
+.settings-nav{margin-top:15px;border-top:1px solid #30243e;border-radius:0 0 12px 12px;padding-top:18px}
+.nav-item:focus-visible,.btn:focus-visible,.icon-btn:focus-visible,.mini-btn:focus-visible,.toggle:focus-visible,.presets button:focus-visible,.weekday-list button:focus-visible{outline:2px solid #f0ca8e;outline-offset:3px}
+.toggle:hover{filter:brightness(1.13)}
+button:disabled{cursor:not-allowed}
+.settings-layout{display:grid;grid-template-columns:1fr 1fr;gap:16px;height:382px;margin-top:23px}
+.settings-card{min-width:0;background:linear-gradient(160deg,#21192f,#171222);border:1px solid #433251;border-radius:17px;padding:20px 20px;display:flex;flex-direction:column}
+.settings-heading{display:flex;align-items:center;justify-content:space-between;min-height:29px;padding-bottom:15px;border-bottom:1px solid #37293f}
+.settings-kicker{font-weight:850;font-size:10px;letter-spacing:1.5px;color:#e1bddb}
+.settings-symbol{font-size:21px;color:#eec890}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 0;border-bottom:1px solid #34273e}
+.setting-description{flex:1;min-width:0}
+.setting-description strong{display:block;font-size:13px;color:#f1e9f8;font-weight:720;margin-bottom:7px}
+.setting-description small{display:block;max-width:244px;font-size:10.5px;line-height:1.5;color:#aa9bb9}
+.setting-row .toggle{width:43px;height:25px}
+.setting-row .toggle:after{width:17px;height:17px}
+.setting-row .toggle.on:after{left:21px}
+.sound-preview{margin-top:17px;min-height:39px;align-self:flex-start;padding:0 15px}
+.settings-notice{margin-top:auto;font-size:10.5px;line-height:1.65;color:#b2a5c0;background:#241c32;border:1px solid #372941;padding:10px 11px;border-radius:10px}
+.shortcuts{padding:17px 0 12px}
+.shortcuts strong{display:block;font-size:12px;color:#e4d5f3;margin-bottom:12px}
+.shortcuts-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 5px;font-size:10px;color:#b2a5c4;line-height:1.4}
+.shortcuts-grid span{white-space:nowrap}
+kbd{display:inline-block;font:inherit;color:#e5c6f7;border:1px solid #594268;border-radius:5px;background:#2e2141;padding:2px 5px}
+.reduced-motion *, .reduced-motion *::before, .reduced-motion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* v0.3 — alarm audio preferences and compact independent timers */
+.timer-layout{height:296px;margin-top:11px}
+.timer-left{padding:18px 21px}
+.timer-inputs{margin-top:8px}
+.timer-inputs input{height:53px;font-size:28px;margin-top:5px}
+.time-sep{padding-bottom:15px}
+.presets-label{margin-top:18px}
+.presets{margin-top:9px}
+.presets button{padding:8px 0}
+.timer-note{margin-top:12px;line-height:1.5;font-size:10px}
+.timer-right{gap:10px}
+.timer-ring{width:193px;height:193px;padding:5px}
+.ring-time{font-size:25px;margin:8px 0}
+.actions .btn{min-width:117px;min-height:38px}
+.extra-timers-head{display:flex;justify-content:space-between;align-items:center;margin:14px 0 8px}
+.extra-timers-head h2{font-size:14px;margin:0 0 2px}
+.extra-timers-head small{color:#9586a8;font-size:10px}
+.timer-extra-tools{display:flex;align-items:center;gap:6px;color:#9f8caf;font-size:10px}
+.timer-extra-tools .btn{min-height:29px;padding:0 9px;font-size:10px;margin-right:5px}
+.timer-extra-tools .icon-btn{width:23px;height:23px;font-size:17px;padding-bottom:2px}
+.extra-timers-list{display:grid;grid-template-rows:repeat(2,39px);gap:6px;height:84px}
+.extra-timer-row{display:flex;align-items:center;gap:9px;min-width:0;background:#191426;border:1px solid #392a46;border-radius:9px;padding:0 8px 0 12px}
+.extra-timer-name{font-size:11px;color:#cbb7d7;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.extra-timer-time{font-size:17px;color:#f6e4fa;font-weight:780;min-width:82px}
+.extra-timer-control{height:25px;min-width:48px;padding:0 8px;font-weight:700;font-size:10px;border:1px solid #5b4369;border-radius:7px;background:#30213f;color:#efd5fa}
+.extra-timer-control.delete{min-width:26px;padding:0 5px;color:#e4a8bb}
+.extra-empty{font-size:11px;color:#8e819c;border:1px dashed #403149;border-radius:9px;grid-row:1/3;display:grid;place-items:center}
+.settings-v3{margin-top:15px;height:390px}
+.settings-v3 .settings-card{padding:15px 17px}
+.settings-v3 .settings-heading{padding-bottom:8px;min-height:23px}
+.settings-v3 .setting-row.compact{padding:10px 0}
+.settings-v3 .setting-description strong{margin-bottom:3px;font-size:12px}
+.settings-v3 .setting-description small{font-size:10px;max-width:270px}
+.setting-audio-field{margin-top:12px;display:flex;flex-direction:column;gap:6px}
+.setting-audio-field label{font-size:11px;color:#d9c3e7;font-weight:700}
+.setting-audio-field select{width:100%;height:33px;min-height:33px;background:#120f20;border:1px solid #574365;border-radius:8px;color:#f5e9f9;padding:0 10px;outline:none}
+.setting-audio-field select:focus-visible{outline:2px solid #f0ca8e;outline-offset:2px}
+.setting-inline{display:flex;justify-content:space-between;align-items:center}
+.setting-inline output{font-size:10px;color:#f0ca8e}
+.setting-audio-field input[type=range]{width:100%;height:12px;accent-color:#c79af2;cursor:pointer}
+.sound-actions{display:flex;gap:6px;margin-top:12px}
+.sound-actions .btn{min-height:31px;font-size:11px;padding:0 10px}
+.audio-notice{margin-top:9px!important;padding:7px 9px!important;line-height:1.35!important;min-height:31px;font-size:10px!important}
+.settings-v3 .shortcuts{padding:16px 0}
+.settings-v3 .shortcuts-grid{row-gap:12px}
+.settings-v3 .settings-notice:not(.audio-notice){margin-top:auto}
+
+.extra-duration{width:88px;height:29px;border:1px solid #59416b;background:#151020;color:#f4e1f8;border-radius:8px;text-align:center;font-weight:700;font-size:12px}
+
+
+/* v0.3.2 — Visual Refinement: cosmetic changes only. */
+:root{--muted:#ab9cb9}
+/* Raise secondary-text contrast without changing the accent palette. */
+.brand-sub,.sidebar-version,.aside-hint,.top-right,.section-caption,.page-title p,
+.timer-note,.extra-timers-head small,.setting-description small,.settings-notice,
+.shortcuts-grid,.footer,.alarm-info small,.aside-clock-date{color:#b5a5c5}
+.crumb,.sidebar-section{color:#a593bc}
+/* Do not show inactive pagination; controls and page index remain present for multi-page lists. */
+.extra-page-nav{display:flex;align-items:center;gap:8px;color:#b1a1c0;font-size:10px}
+/* Compact empty states only. Filled lists retain their v0.3.0 geometry. */
+.alarm-list.is-empty{display:block;height:102px;overflow:visible}
+.lap-list.is-empty{display:block;height:94px}
+.extra-timers-list.is-empty{display:block;height:67px}
+.alarm-list.is-empty .empty,.lap-list.is-empty .empty,.extra-timers-list.is-empty .extra-empty{
+  height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;
+  border:1px dashed #554264;border-radius:12px;background:linear-gradient(110deg,#181324,#130f20);
+  color:#c7b4d7;font-size:12px;line-height:1.2;grid-row:auto;text-align:center;
+}
+.alarm-list.is-empty .empty .empty-glyph,.lap-list.is-empty .empty .empty-glyph,
+.extra-timers-list.is-empty .extra-empty .empty-glyph{font-size:21px;color:#d9a8ed;line-height:1}
+.alarm-list.is-empty .empty small,.lap-list.is-empty .empty small,
+.extra-timers-list.is-empty .extra-empty small{font-size:10.5px;color:#a99ab9}
+/* Additional timers: balanced actions and duration input on a single baseline. */
+.extra-timers-head{gap:8px}
+.timer-extra-tools{gap:8px;flex-wrap:nowrap;flex-shrink:0}
+.timer-extra-tools .btn{margin-right:0}
+.extra-duration{height:30px;min-width:88px}
+/* Improve the sliders' visual progress and keyboard focus in Chromium WebView2. */
+.setting-audio-field input[type=range]{-webkit-appearance:none;appearance:none;height:18px;border:0;background:transparent;margin:0;cursor:pointer}
+.setting-audio-field input[type=range]::-webkit-slider-runnable-track{height:7px;border:1px solid #725e82;border-radius:999px;background:linear-gradient(to right,#c49af2 0%,#c49af2 var(--range-fill,0%),#41344f var(--range-fill,0%),#41344f 100%)}
+.setting-audio-field input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin-top:-5.5px;background:#cba3f5;border:2px solid #eed6ff;border-radius:50%;box-shadow:0 0 0 2px #241a32}
+.setting-audio-field input[type=range]:focus-visible{outline:2px solid #f0ca8e;outline-offset:3px;border-radius:8px}
+.setting-inline output{font-weight:800;font-size:11px;font-variant-numeric:tabular-nums}
+.setting-audio-field label{color:#e0cde9}
+
+/* AngelTime v0.4.1 — Minimalist UI Refresh.
+   Presentation only. Keep the original control IDs, geometry and dynamic state styles. */
+:root {
+  --bg:#100f18;
+  --panel:#1a1824;
+  --border:#373043;
+  --muted:#aca5bb;
+  --text:#f2eef7;
+  --lilac:#c4a2ee;
+  --pink:#deb3eb;
+  --gold:#c3a9dc;
+  --primary:#b78aea;
+}
+body {background:#100f18;}
+.app-shell {background:#100f18;grid-template-columns:236px minmax(0,1fr);}
+.sidebar {background:#15131e;border-color:#292534;padding:27px 15px 19px;}
+.brand {gap:10px;padding:0 10px;}
+.brand-mark {width:40px;height:40px;border-radius:12px;background:#242032;border-color:#3c324f;}
+.brand-mark svg {width:27px;height:27px;}
+.brand-name {font-size:20px;font-weight:740;letter-spacing:-.7px;}
+.brand-name span {color:#cba6ef;}
+.brand-sub {font-size:11px;color:#9c94ae;}
+.sidebar-section {margin:39px 14px 12px;font-size:10px;letter-spacing:1.35px;color:#938aab;font-weight:700;}
+.nav {gap:6px;}
+.nav-item {padding:12px 13px;min-height:46px;border-radius:10px;color:#afa8be;font-size:13px;font-weight:600;gap:12px;}
+.nav-item svg {width:19px;height:19px;}
+.nav-item:hover {background:#24202f;color:#f5efff;}
+.nav-item.active {background:#2c2439;border:1px solid #494056;color:#f2e9fb;box-shadow:inset 2px 0 0 #c4a0ec;}
+.nav-item.active svg {color:#ccadf2;}
+.nav-count {border-radius:7px;background:#393047;color:#d8c7e9;min-width:21px;padding:3px 5px;}
+.settings-nav {border-color:#292534;padding-top:15px;margin-top:12px;}
+.aside-clock {background:#201b2b;border-color:#332b42;border-radius:12px;padding:17px 17px 15px;}
+.aside-clock-label {font-size:10px;letter-spacing:1.3px;color:#b2a2c8;}
+.aside-clock-time {font-size:37px;letter-spacing:-.8px;font-weight:710;}
+.aside-clock-date,.sidebar-version,.aside-hint {color:#a59bb6;}
+.aside-hint {margin:17px 4px 12px;}
+.status-dot {width:7px;height:7px;box-shadow:none;background:#79c69b;}
+.sidebar-version span {color:#c0a4e2;}
+.main {padding:0 29px;}
+.topline {height:54px;border-color:#292534;}
+.breadcrumbs {font-weight:650;letter-spacing:.35px;color:#c4b6d6;}
+.crumb {color:#948aa9;}
+.slash {color:#62566f;margin:0 10px;}
+.top-right {display:none;}
+.tab-panel {padding-top:25px;}
+.eyebrow {display:none;}
+.page-title {min-height:61px;margin-bottom:17px;}
+.page-title h1 {font-size:30px;font-weight:720;letter-spacing:-1px;margin:0 0 5px;}
+.page-title p {font-size:12px;color:#aaa1ba;}
+.head-icon {display:none;}
+.btn {border-radius:9px;min-height:39px;padding:0 16px;font-weight:650;background:#292333;border-color:#473b55;color:#e8def3;box-shadow:none;transition:background-color .15s,border-color .15s;}
+.btn:active {transform:none;}
+.btn-primary {color:#1d1426;border-color:#ba92ec;background:#c3a0ed;box-shadow:none;}
+.btn-primary:hover:not(:disabled) {background:#d3b5f4;border-color:#d3b5f4;}
+.btn-neutral:hover,.btn-ghost:hover {background:#352c41;}
+.btn-ghost {background:transparent;border-color:#443950;}
+.add-alarm {min-width:166px;}
+.plus {font-size:17px;margin-right:4px;}
+.hero {height:148px;background:#211b2d;border-color:#393047;border-radius:14px;padding:22px 28px;}
+.hero-kicker {font-size:10px;letter-spacing:1.2px;color:#b2a3c8;font-weight:700;}
+.gold-line {background:#a994c2;width:13px;height:1px;}
+.hero-digital {font-size:61px;font-weight:720;letter-spacing:-1px;color:#f3edf9;margin:5px 0 3px;}
+.hero-digital span {font-size:28px;color:#be9fdf;}
+.hero-caption {color:#b4a9c5;font-size:12px;}
+.hero-right {display:none;}
+.list-head {margin:21px 0 12px;}
+.list-head h2,.extra-timers-head h2 {font-weight:700;letter-spacing:-.3px;}
+.counter-pill {color:#ccb5e3;background:#2c2439;border:1px solid #3a3049;font-weight:600;padding:2px 7px;}
+.section-caption {color:#aca1bb;font-size:11px;}
+.icon-btn,.mini-btn {background:#211c2c;border-color:#40354d;border-radius:8px;color:#cbbbdc;}
+.icon-btn:hover,.mini-btn:hover {background:#33293f;}
+.alarm-item,.lap-item,.extra-timer-row {background:#1b1726;border-color:#342b43;border-radius:9px;}
+.alarm-info small,.lap-label,.extra-timer-name {color:#aca0be;}
+.alarm-list.is-empty .empty,.lap-list.is-empty .empty,.extra-timers-list.is-empty .extra-empty {
+  background:#181520;border:1px solid #30283d;border-radius:11px;color:#c7b5d8;
+}
+.alarm-list.is-empty .empty .empty-glyph,.lap-list.is-empty .empty .empty-glyph,
+.extra-timers-list.is-empty .extra-empty .empty-glyph {font-size:18px;color:#b79bda;}
+.alarm-list.is-empty .empty small,.lap-list.is-empty .empty small,
+.extra-timers-list.is-empty .extra-empty small {color:#a99dbb;}
+.timer-layout {margin-top:12px;height:296px;}
+.timer-left {background:#1d1929;border-color:#363044;border-radius:13px 0 0 13px;}
+.timer-right {background:#1b1725;border-color:#363044;border-radius:0 13px 13px 0;}
+.input-title,.timer-small-kicker {color:#bca9d0;letter-spacing:1.2px;font-weight:700;}
+.timer-inputs label {color:#aca0bc;letter-spacing:.65px;font-weight:650;}
+.timer-inputs input,.extra-duration {background:#14111e;border-color:#483c56;border-radius:9px;color:#f1eaf9;}
+.time-sep {color:#a899bc;}
+.presets button {background:#292335;border-color:#483a55;color:#cdbfda;font-weight:650;border-radius:8px;}
+.presets button:hover {background:#342a42;}
+.presets button.selected {background:#3c2b4f;color:#e5cef7;border-color:#8765a9;}
+.timer-note,.extra-timers-head small {color:#ada4bc;}
+.timer-ring {box-shadow:none;width:190px;height:190px;padding:5px;}
+.ring-inner {background:#1b1725;}
+.ring-label,.ring-status {color:#baa9cf;}
+.ring-time {color:#f3edf8;font-weight:730;}
+.stopwatch-display {background:#211b2d;border-color:#403249;border-radius:14px;height:200px;padding:25px 15px;margin-top:13px;}
+.stopwatch-digits {font-weight:720;color:#f4eef9;}
+.stopwatch-digits span {color:#c19ddf;}
+.extra-timer-row {background:#1b1726;}
+.setting-audio-field select {background:#15121f;border-color:#483a58;}
+.settings-v3 {margin-top:12px;height:390px;gap:14px;}
+.settings-card {background:#1d1929;border-color:#383047;border-radius:13px;box-shadow:none;}
+.settings-heading {border-color:#352b42;}
+.settings-kicker {color:#cbb5dc;font-weight:700;letter-spacing:1.1px;}
+.settings-symbol {display:none;}
+.setting-row {border-color:#332b40;}
+.setting-description strong,.setting-audio-field label {color:#e9e0f3;}
+.setting-description small,.settings-notice,.shortcuts-grid {color:#b0a5bf;}
+.setting-inline output {color:#cdb4e6;}
+.setting-audio-field input[type=range]::-webkit-slider-runnable-track {
+  border-color:#5a4b68;background:linear-gradient(to right,#bc96e5 0%,#bc96e5 var(--range-fill,0%),#40364c var(--range-fill,0%),#40364c 100%);
+}
+.setting-audio-field input[type=range]::-webkit-slider-thumb {background:#bd9ae6;border-color:#e7d8f5;box-shadow:0 0 0 2px #211b2d;}
+.settings-notice {background:#221d2d;border-color:#342b40;border-radius:9px;}
+.toggle {background:#363041;border-color:#60536c;}
+.toggle.on {background:#af85dd;border-color:#af85dd;}
+.shortcuts strong {color:#e3d7ed;}
+kbd {background:#282135;border-color:#544463;color:#d5bee8;}
+.footer {border-color:#292534;color:#9d93ad;font-size:10px;}
+.footer>span:first-child {display:none;}
+.dialog {background:#201a2c;border:1px solid #574467;border-radius:14px;box-shadow:0 16px 65px #0009;}
+.alert-symbol {background:#3b2b4d;color:#d5b8ed;}
+.time-field,.text-field {background:#14111d;border-color:#564761;}
+.weekday-list button {background:#282136;border-color:#4b3d57;}
+.weekday-list button[aria-pressed="true"] {background:#b990e6;border-color:#b990e6;}
+.toast {background:#30253e;border-color:#59446a;box-shadow:0 12px 40px #0008;}
+/* Respect the user's explicit reduced-motion setting and keyboard navigation. */
+.btn:focus-visible,.nav-item:focus-visible,.setting-audio-field select:focus-visible,
+.setting-audio-field input[type=range]:focus-visible {outline:2px solid #d4b3f2;outline-offset:2px;}
+
+/* AngelTime v0.4.2 — Monochrome Gold Refresh.
+   Visual-only theme. Keep the fixed 1060x690 layout and component geometry. */
+:root {
+  --bg:#0c0c0d;
+  --panel:#19191b;
+  --border:#363638;
+  --muted:#a9a8aa;
+  --text:#f5f4f1;
+  --lilac:#c9c7c2;
+  --pink:#ece9e3;
+  --gold:#d5b36d;
+  --primary:#d5b36d;
+  --gold-deep:#9f8044;
+  --gold-light:#e9ce91;
+}
+body,.app-shell {background:#0c0c0d;color:var(--text)}
+.sidebar {background:#121213;border-color:#28282a}
+.brand-mark {background:#212124;border-color:#4b4030}
+.brand-mark svg {filter:none}
+.brand-name,.brand-name span {color:#f5f4f1}
+.brand-name span {color:#d8b66f}
+.brand-sub,.sidebar-section,.sidebar-version,.aside-clock-date,.aside-hint {color:#aaa9aa}
+.sidebar-section {color:#979597}
+.nav-item {color:#b6b4b5}
+.nav-item:hover {background:#232325;color:#f5f4f1}
+.nav-item.active {background:#242321;border-color:#554a37;color:#f6f2e7;box-shadow:inset 2px 0 0 #d8b66f}
+.nav-item.active svg,.sidebar-version span {color:#d8b66f}
+.nav-count,.counter-pill {background:#292724;color:#dec58d;border-color:#4d4434}
+.settings-nav {border-color:#29292b}
+.aside-clock {background:#1b1b1d;border-color:#353537}
+.aside-clock-label {color:#d2b06d}
+.aside-clock-time,.hero-digital {color:#f7f6f3}
+.main {background:#0c0c0d}
+.topline,.footer {border-color:#28282a}
+.breadcrumbs {color:#ddd6c8}
+.crumb,.slash {color:#999797}
+.page-title h1,.list-head h2,.extra-timers-head h2 {color:#f7f6f4}
+.page-title p,.section-caption,.timer-note,.extra-timers-head small,.footer {color:#b3b2b1}
+.btn {background:#252527;color:#eeece8;border-color:#454547;box-shadow:none}
+.btn:hover:not(:disabled),.btn-neutral:hover,.btn-ghost:hover {background:#303032;border-color:#585650}
+.btn-primary {background:#d5b36d;color:#171511;border:1px solid #d5b36d;box-shadow:none;font-weight:750}
+.btn-primary:hover:not(:disabled) {background:#e6c786;border-color:#e6c786;color:#171511}
+.btn-ghost {background:transparent;border-color:#404042}
+.hero {background:#1b1b1d;border-color:#383638;box-shadow:none}
+.hero-kicker,.gold-line {color:#cfac65}
+.gold-line {background:#cfae69}
+.hero-digital span {color:#d8b66f}
+.hero-caption {color:#c0bec0}
+.alarm-item,.lap-item,.extra-timer-row {background:#1b1b1d;border-color:#353537}
+.alarm-time,.extra-timer-time {color:#f6f5f1}
+.alarm-info small,.lap-label,.extra-timer-name {color:#b0afb0}
+.icon-btn,.mini-btn,.extra-timer-control {background:#242426;border:1px solid #474748;color:#d5d2ca}
+.icon-btn:hover,.mini-btn:hover,.extra-timer-control:hover {background:#303033}
+.extra-timer-control.delete {color:#d7c4b1}
+.alarm-list.is-empty .empty,.lap-list.is-empty .empty,.extra-timers-list.is-empty .extra-empty {
+  background:#181819;border:1px solid #333336;color:#d5d3cf;
+}
+.alarm-list.is-empty .empty .empty-glyph,.lap-list.is-empty .empty .empty-glyph,
+.extra-timers-list.is-empty .extra-empty .empty-glyph {color:#d4b16d}
+.alarm-list.is-empty .empty small,.lap-list.is-empty .empty small,
+.extra-timers-list.is-empty .extra-empty small {color:#aaa9ab}
+.timer-left,.timer-right {background:#1b1b1d;border-color:#373739}
+.timer-right {border-left:0}
+.timer-inputs label,.input-title,.timer-small-kicker,.presets-label {color:#c9b78f}
+.timer-inputs input,.extra-duration {background:#101011;border-color:#484747;color:#f9f8f4}
+.time-sep {color:#b6a279}
+.presets button {background:#272729;border-color:#454547;color:#dedbd5}
+.presets button:hover {background:#313133}
+.presets button.selected {background:#302b21;border-color:#a88b56;color:#efddb2}
+.timer-ring {box-shadow:none;background:conic-gradient(#d5b36d 0deg,#c49e54 360deg)}
+.ring-inner {background:#19191b}
+.ring-label,.ring-status {color:#c2b18e}
+.ring-time {color:#f7f6f2}
+.stopwatch-display {background:#1c1c1e;border-color:#3b393a;box-shadow:none}
+.stopwatch-digits {color:#f7f5f1}
+.stopwatch-digits span {color:#d8b66f}
+.settings-card {background:#1b1b1d;border-color:#363638;box-shadow:none}
+.settings-heading,.setting-row {border-color:#343436}
+.settings-kicker {color:#d6bd89}
+.setting-description strong,.setting-audio-field label,.shortcuts strong {color:#f2f1ed}
+.setting-description small,.settings-notice,.shortcuts-grid {color:#b7b5b3}
+.setting-audio-field select {background:#101012;border-color:#484747;color:#f1efea}
+.setting-inline output {color:#e2c27e}
+.setting-audio-field input[type=range] {accent-color:#d7b56e}
+.setting-audio-field input[type=range]::-webkit-slider-runnable-track {
+  border:1px solid #55514a;
+  background:linear-gradient(to right,#d5b36d 0%,#d5b36d var(--range-fill,0%),#444346 var(--range-fill,0%),#444346 100%);
+}
+.setting-audio-field input[type=range]::-webkit-slider-thumb {
+  background:#e0bf79;border:2px solid #f6e5bd;box-shadow:0 0 0 2px #1b1b1d;
+}
+.settings-notice {background:#222224;border-color:#373638;color:#b9b8b7}
+.toggle {background:#353537;border-color:#69686a}
+.toggle:after {background:#c8c5c1}
+.toggle.on {background:#cba765;border-color:#cba765}
+.toggle.on:after {background:#171613}
+kbd {background:#292829;border-color:#504839;color:#ead7a7}
+/* Dialog polish: reduced chroma, one clear focus ring, improved button hierarchy. */
+.overlay {background:rgba(0,0,0,.82)}
+.dialog {background:#1d1d1f;border:1px solid #4a4439;border-radius:14px;box-shadow:0 25px 75px #000a;padding:25px 26px}
+.dialog h2 {font-weight:720;letter-spacing:-.5px;color:#f6f4f0}
+.close-dialog {color:#bdbbb8;line-height:1}
+.close-dialog:hover {color:#e5c581}
+.field-label {color:#cac8c4;font-weight:650;letter-spacing:.2px}
+.time-field,.text-field {background:#101012;border:1px solid #494849;color:#f8f7f4;border-radius:8px}
+.time-field:focus,.text-field:focus {outline:none;border-color:#d3b16a;box-shadow:0 0 0 2px #b4945150}
+.time-field:focus-visible,.text-field:focus-visible {outline:none;outline-offset:0}
+.time-field:focus::-webkit-datetime-edit-field {background:transparent}
+.weekday-list button {background:#29292a;border-color:#454547;border-radius:8px;color:#d1cfca;font-weight:650}
+.weekday-list button:hover {background:#343335;border-color:#68604d}
+.weekday-list button[aria-pressed="true"] {background:#d5b36d;border-color:#d5b36d;color:#1d1a14}
+.once-hint {color:#a9a8a6}
+.dialog-actions {margin-top:23px;gap:9px}
+.dialog-actions .btn {min-width:95px}
+.dialog-actions .btn-primary {background:#d5b36d;color:#181612;border-color:#d5b36d}
+.dialog-actions .btn-primary:hover {background:#e6c786}
+.alert-symbol {background:#29261f;color:#e0bb72;border:1px solid #52452f}
+.alert-dialog p {color:#c7c5c2}
+.toast {background:#242322;color:#f5efdc;border-color:#665234;box-shadow:0 12px 32px #0009}
+/* Accessible focus indication: gold is reserved for interaction. */
+button:focus-visible,.nav-item:focus-visible,.btn:focus-visible,.icon-btn:focus-visible,
+.mini-btn:focus-visible,.toggle:focus-visible,.presets button:focus-visible,
+.weekday-list button:focus-visible,.setting-audio-field select:focus-visible,
+.setting-audio-field input[type=range]:focus-visible {outline:2px solid #e4c57f;outline-offset:2px}
+/* AngelTime v0.4.3 — Essential UI.
+   Less chrome, clear hierarchy, functional gold accents only.
+   No change to control IDs or business logic. */
+:root{
+  --bg:#0d0d0e;
+  --panel:#171718;
+  --border:#29292b;
+  --muted:#aaa9a8;
+  --text:#f3f3f1;
+  --gold:#d7b773;
+  --gold-light:#e6cb92;
+}
+body,.app-shell,.main{background:var(--bg)}
+.app-shell{grid-template-columns:218px minmax(0,1fr)}
+.sidebar{padding:26px 14px 19px;border-right:1px solid #272729;background:#111112}
+.brand{padding:0 9px;gap:11px}
+.brand-mark{width:39px;height:39px;border-radius:10px;background:#19191b;border-color:#3a3428}
+.brand-name{font-size:20px;letter-spacing:-.65px}
+.nav{margin-top:67px;gap:5px}
+.nav-item{min-height:45px;padding:11px 13px;border-radius:9px;font-weight:600;font-size:13px;gap:12px}
+.nav-item.active{background:#25231f;border:1px solid #514733;color:#f4f1ea;box-shadow:none}
+.nav-item.active svg{color:#d7b773}
+.nav-item:not(.active):hover{background:#1d1d1f}
+.nav-count{min-width:20px;padding:2px 5px;font-size:11px;background:#342f25;color:#e7cb8c}
+.settings-nav{margin-top:10px;padding-top:11px;border-top:1px solid #2a2a2b;border-left-color:transparent;border-right-color:transparent;border-bottom-color:transparent}
+.settings-nav.active{border:1px solid #514733}
+.sidebar-bottom{margin-top:auto}
+.aside-hint{margin:0 10px;color:#aaa9a8;font-size:11px;gap:8px}
+.status-dot{width:6px;height:6px;box-shadow:none}
+.main{padding:0 34px}
+.tab-panel{padding-top:53px}
+.page-title{min-height:48px;margin-bottom:21px}
+.page-title h1{margin:0;font-size:30px;font-weight:730;letter-spacing:-1.1px}
+.page-title p,.head-icon,.eyebrow{display:none}
+.btn{min-height:39px;border:1px solid #3d3d3f;background:#252527;border-radius:8px;color:#edecea;font-weight:600;padding:0 15px;transition:background-color .12s,border-color .12s}
+.btn-primary{color:#161410;background:#d7b773;border-color:#d7b773;font-weight:710}
+.btn-primary:hover:not(:disabled){background:#e7ca8d;border-color:#e7ca8d}
+.btn-neutral:hover,.btn-ghost:hover{background:#313133}
+.btn-ghost{background:transparent;border-color:#333336}
+.add-alarm{min-width:161px}
+.hero{height:131px;border:0;border-bottom:1px solid #29292b;border-radius:0;background:none;padding:4px 0 18px;overflow:visible}
+.hero-digital{font-size:64px;font-weight:710;letter-spacing:-1.9px;color:#f5f5f3;margin:0 0 6px;line-height:1.02}
+.hero-digital span{font-size:29px;color:#d5b36d}
+.hero-caption{color:#a9a8a7;font-size:12px}
+.list-head{margin:24px 0 13px;min-height:30px}
+.list-head h2,.extra-timers-head h2{font-size:15px;margin:0;letter-spacing:-.3px;font-weight:680}
+.counter-pill{margin-left:5px;font-size:11px;padding:2px 6px;border:1px solid #3f392b;background:#292722;color:#d7b773;border-radius:6px}
+.section-caption{font-size:11px;color:#a9a8a7;margin-top:5px}
+.alarm-list.is-empty{height:48px;display:block;overflow:visible}
+.alarm-list.is-empty .empty{height:48px;border:0;background:none;border-radius:0;display:flex;align-items:flex-start;justify-content:center;text-align:left;padding:0;color:#949394;font-size:13px;gap:0}
+.alarm-item,.lap-item,.extra-timer-row{background:#181819;border:1px solid #2c2c2e;border-radius:8px}
+.icon-btn,.mini-btn,.extra-timer-control{background:#1e1e20;border:1px solid #353537;border-radius:7px}
+.timer-layout{margin-top:6px;height:288px;border:1px solid #2d2d2f;background:#161617;border-radius:11px;overflow:hidden}
+.timer-left,.timer-right{background:transparent;border:0;border-radius:0}
+.timer-left{padding:26px 21px;border-right:1px solid #2c2c2e}
+.timer-right{gap:9px}
+.timer-inputs label{color:#b9b7b3}
+.timer-inputs input,.extra-duration{background:#101011;border:1px solid #39393b;border-radius:7px}
+.time-sep{color:#c4a66d}
+.presets{margin-top:18px}
+.presets button{border-radius:7px;background:#242425;border-color:#363638;color:#dbdad8}
+.presets button.selected{background:#332e23;border-color:#8f7849;color:#f1deba}
+.timer-ring{width:184px;height:184px;box-shadow:none}
+.ring-inner{background:#161617}
+.ring-label{color:#b9b7b3}
+.ring-time{font-size:25px}
+.ring-status{color:#d8bb7a}
+.extra-timers-head{margin:20px 0 0;gap:12px}
+.timer-extra-tools{gap:9px}
+.extra-duration{min-width:90px}
+.stopwatch-display{margin-top:8px;height:210px;border-radius:11px;border:1px solid #2d2d2f;background:#171718;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:15px;padding:20px 15px}
+.stopwatch-digits{font-size:59px;letter-spacing:-1.5px;line-height:1.12}
+.stopwatch-actions{margin-top:0}
+.laps-head{margin-top:20px}
+.lap-list{margin-top:9px}
+.settings-v3{margin-top:4px;height:auto;display:grid;grid-template-columns:1.06fr .94fr;align-items:start;gap:15px}
+.settings-v3 .settings-card{padding:20px 20px;background:#181819;border:1px solid #2e2e30;border-radius:10px;min-height:0;box-shadow:none}
+.settings-v3 .settings-heading{border-bottom:1px solid #303032;min-height:0;padding-bottom:13px;margin-bottom:4px}
+.settings-kicker{color:#f0eeea;font-size:15px;font-weight:675;letter-spacing:0;text-transform:none}
+.setting-row{border-color:#303032;min-height:45px}
+.setting-description strong{font-size:12px;font-weight:600}
+.setting-audio-field{margin-top:14px}
+.setting-audio-field label{color:#d7d6d2;font-size:12px}
+.setting-audio-field select{background:#111112;border-color:#3a3a3c;border-radius:7px}
+.setting-inline output{color:#e0bf80}
+.setting-audio-field input[type=range]::-webkit-slider-runnable-track{height:5px;border:0;background:linear-gradient(to right,#d5b36d 0%,#d5b36d var(--range-fill,0%),#414143 var(--range-fill,0%),#414143 100%)}
+.setting-audio-field input[type=range]::-webkit-slider-thumb{width:15px;height:15px;margin-top:-5px;background:#e6c884;border:2px solid #fff0cc;box-shadow:none}
+.sound-actions{margin-top:12px}
+.sound-actions .btn{padding:0 11px;font-size:11px}
+.toggle{transform:scale(.92);transform-origin:right center}
+.settings-notice{background:#202021;border:1px solid #363637;border-radius:7px;font-size:11px;color:#c4c1bc}
+.shortcuts-details{margin-top:11px;padding:9px 0 0;border-top:1px solid #303032}
+.shortcuts-details summary{cursor:pointer;list-style:none;color:#aaa9a6;font-size:12px;outline-offset:3px}
+.shortcuts-details summary::-webkit-details-marker{display:none}
+.shortcuts-details summary:after{content:'⌄';float:right;color:#aaa9a6}
+.shortcuts-details[open] summary:after{content:'⌃'}
+.shortcuts-details .shortcuts-grid{margin-top:15px;display:grid;grid-template-columns:1fr 1fr;gap:13px 8px;font-size:10px}
+.shortcuts-details .shortcuts-grid span{white-space:nowrap}
+.dialog{background:#1b1b1d;border:1px solid #48433a;border-radius:12px;box-shadow:0 20px 55px #000a;padding:25px 26px}
+.dialog h2{font-size:24px;margin:0 0 20px;font-weight:710}
+.time-field,.text-field{background:#111112;border-color:#3c3c3e}
+.weekday-list button{background:#272729;border-color:#3c3c3d}
+.weekday-list button[aria-pressed=true]{background:#d5b36d;border-color:#d5b36d;color:#1c1812}
+/* Avoid any unexpected purple leftovers on empty, focus and time accents. */
+.empty span,.empty-glyph{color:#a9a7a3}
+*:focus-visible{outline-color:#e1c17c}
+
+/* AngelTime v0.4.4 — compact dialogs and quiet settings. */
+.overlay {background:rgba(0,0,0,.69)}
+.dialog {border:1px solid #3d3d3f;border-radius:11px;box-shadow:0 18px 52px rgba(0,0,0,.62)}
+.dialog h2 {font-size:23px;letter-spacing:-.55px}
+.time-field,.text-field {border:1px solid #454548;box-shadow:none;outline:none}
+.time-field:focus,.text-field:focus,.time-field:focus-visible,.text-field:focus-visible {
+  outline:none;box-shadow:none;border-color:#d7b773;
+}
+/* The native HTML time-picker stays available; attempt to style its selected segment. */
+.time-field::-webkit-datetime-edit-hour-field:focus,
+.time-field::-webkit-datetime-edit-minute-field:focus {
+  background-color:#d7b773;color:#121212;border-radius:2px;
+}
+.weekday-list {gap:6px}
+.weekday-list button {border-radius:7px;background:#232325;border:1px solid #38383b;color:#c9c9c7}
+.weekday-list button:hover {background:#2a2a2d;border-color:#555046}
+.weekday-list button[aria-pressed=true] {background:#d7b773;color:#131311;border-color:#d7b773}
+.dialog-actions .btn-neutral {background:transparent;border-color:#424244;color:#d5d4d0}
+.dialog-actions .btn-neutral:hover {background:#272729}
+.delete-dialog {width:min(420px,calc(100vw - 32px));padding:25px 26px}
+.delete-dialog h2 {margin:0 0 11px}
+.delete-dialog p {font-size:13px;line-height:1.55;color:#bbb9b6;margin:0;overflow-wrap:anywhere}
+.delete-dialog .dialog-actions {margin-top:25px}
+.settings-v3 {height:auto;min-height:0;align-items:stretch;grid-auto-rows:1fr}
+.settings-v3 .settings-card {min-height:0;justify-content:flex-start;padding:17px 18px}
+.settings-v3 .settings-heading {padding-bottom:10px;border-bottom:1px solid #343436}
+.settings-v3 .setting-row.compact {padding:11px 0;border-bottom:0}
+.settings-v3 .setting-row.compact + .setting-row.compact {border-top:1px solid #303032}
+.settings-v3 .setting-row.compact + .setting-audio-field {border-top:1px solid #303032;padding-top:12px}
+.settings-v3 .shortcuts-details {margin-top:5px;border-top:1px solid #303032}
+.settings-v3 .shortcuts-details .shortcuts-grid {font-size:11px;line-height:1.5}
+.settings-v3 .setting-description strong,.settings-v3 .setting-audio-field label {font-size:12px}
+.settings-v3 .setting-audio-field input[type=range] {height:17px}
+@media (prefers-reduced-motion:reduce){.delete-dialog,.overlay{animation:none}}
+
+/* v0.4.5: custom monochrome-gold melody menu, not WebView2's native popup. */
+.melody-native-select{display:none!important}
+.melody-picker{position:relative;width:100%;min-width:0}
+.melody-trigger{width:100%;min-height:34px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:0 12px;background:#111112;border:1px solid #464646;border-radius:7px;color:#f1f0ec;font:inherit;font-size:12px;cursor:pointer}
+.melody-trigger span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.melody-trigger:hover{border-color:#827355}
+.melody-picker.open .melody-trigger,.melody-trigger:focus-visible{outline:none;border-color:#d5b36d;box-shadow:0 0 0 1px #d5b36d}
+.melody-chevron,.shortcuts-chevron{display:inline-block;flex:none;width:7px;height:7px;border-right:1.5px solid #c3b18b;border-bottom:1.5px solid #c3b18b;transform:rotate(45deg);transition:transform .12s ease}
+.melody-picker.open .melody-chevron,.shortcuts-details[open] .shortcuts-chevron{transform:rotate(225deg)}
+.melody-options{position:absolute;z-index:20;top:calc(100% + 5px);left:0;right:0;padding:4px;background:#202021;border:1px solid #494744;border-radius:8px;box-shadow:0 12px 28px #0009}
+.melody-options.hidden{display:none!important}
+.melody-option{width:100%;min-height:34px;text-align:left;display:block;padding:8px 10px;background:transparent;color:#f0efeb;border:1px solid transparent;border-radius:5px;font:inherit;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.melody-option:hover,.melody-option:focus-visible{background:#302d27;border-color:#6b5c40;outline:none;color:#ffe2a1}
+.melody-option[aria-selected="true"]{color:#e2c17e;background:#2c2923}
+.melody-option[aria-selected="true"]:focus-visible,.melody-option[aria-selected="true"]:hover{background:#383124}
+.melody-option:disabled{opacity:.48;cursor:not-allowed;color:#aaa8a3}
+/* One quiet, full-width target instead of a stray tiny text arrow. */
+.settings-v3 .shortcuts-details{padding:0;margin-top:11px;border-top:1px solid #303032}
+.settings-v3 .shortcuts-details summary{min-height:42px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:#d0ceca;font-size:12px;padding:0 1px;cursor:pointer}
+.settings-v3 .shortcuts-details summary:after{content:none}
+.settings-v3 .shortcuts-details summary:hover{color:#f7efdc}
+.settings-v3 .shortcuts-details summary:focus-visible{outline:2px solid #d5b36d;outline-offset:-2px;border-radius:4px}
+.settings-v3 .shortcuts-details .shortcuts-grid{margin:0;padding:4px 0 12px}
+
+.shortcuts-chevron{width:14px;height:14px;border:0;transform:none;transition:transform .12s ease;color:#c3b18b}
+.shortcuts-details[open] .shortcuts-chevron{transform:rotate(180deg)}
+
+
+/* AngelTime v0.4.5 — main window reduced to a horizontal switcher.
+   No left sidebar, brand header, status text or decorative flourishes. */
+body,.app-shell,.main{background:#0d0d0e}
+.app-shell{display:block;height:100vh;min-height:0;overflow:hidden}
+.main{width:100%;height:100vh;min-height:0;display:flex;flex-direction:column;padding:0 30px;overflow:hidden}
+.top-navigation{
+  width:100%;max-width:1000px;margin:23px auto 0;flex:none;
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;
+}
+.top-navigation .nav-item{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  min-width:0;height:50px;min-height:50px;padding:0 13px;
+  border:1px solid #343436;border-radius:10px;background:#19191a;
+  color:#d6d5d2;font-weight:620;font-size:13px;letter-spacing:0;
+  box-shadow:none;text-align:center;margin:0;transition:none;
+}
+.top-navigation .nav-item svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.top-navigation .nav-item span{flex:none}
+.top-navigation .nav-item.active{background:#29251d;border-color:#9b824d;color:#f2deb1;box-shadow:none}
+.top-navigation .nav-item.active svg{color:#d7b773}
+.top-navigation .nav-item:not(.active):hover{background:#252525;border-color:#555354;color:#faf8f3}
+.top-navigation .nav-item:focus-visible{outline:2px solid #e6cb92;outline-offset:3px}
+.tab-panel{width:100%;max-width:1000px;margin:0 auto;padding-top:21px;overflow:hidden;flex:1;min-height:0}
+.page-title{min-height:49px;margin-bottom:14px}
+.page-title h1{font-size:28px;letter-spacing:-.9px}
+.hero{height:123px;padding-bottom:13px}
+.hero-digital{font-size:60px}
+.list-head{margin-top:20px}
+.timer-layout{height:285px;margin-top:1px}
+.timer-left{padding:26px 26px}
+.stopwatch-display{height:205px;margin-top:3px}
+.settings-v3{margin-top:3px;grid-template-columns:1.06fr .94fr}
+.settings-v3 .shortcuts-always{border-top:1px solid #303032;margin-top:12px;padding-top:13px}
+.settings-v3 .shortcuts-title{color:#d7d5d1;font-size:12px;font-weight:650}
+.settings-v3 .shortcuts-always .shortcuts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 6px;margin:14px 0 0;color:#bcbab7;font-size:11px;line-height:1.5}
+.settings-v3 .shortcuts-always .shortcuts-grid span{white-space:nowrap}
+.settings-v3 .shortcuts-always kbd{background:#262421;border:1px solid #4c4539;color:#e8c988}
+@media(max-width:800px){
+  .main{padding:0 18px}
+  .top-navigation{gap:7px;margin-top:16px}
+  .top-navigation .nav-item{gap:5px;padding:0 7px;font-size:12px}
+  .top-navigation .nav-item svg{width:16px;height:16px}
+}
+@media(prefers-reduced-motion:reduce){.top-navigation .nav-item{transition:none}}
+
+
+/* v0.4.6 — use the full desktop workspace instead of a fixed 1060×690 window.
+   Keep navigation compact; avoid stretching controls from edge to edge on 1920×1080. */
+.main{padding-inline:clamp(22px,2.8vw,54px)}
+.top-navigation{max-width:1080px}
+.tab-panel{max-width:1380px}
+@media(min-width:1500px) and (min-height:850px){
+  .top-navigation{margin-top:28px}
+  .tab-panel{padding-top:30px}
+  .page-title{margin-bottom:20px}
+  .alarm-item{min-height:48px}
+  .alarm-list{gap:8px}
+  .settings-v3{max-width:1120px;margin-left:auto;margin-right:auto}
+}
+@media(max-width:1000px){
+  .main{padding-inline:20px}
+  .top-navigation{margin-top:16px;gap:8px}
+}
+
+/* Lists must grow with the viewport, not retain the original four-row clipping. */
+.alarm-list:not(.is-empty){height:auto;grid-template-rows:none;grid-auto-rows:46px;overflow:visible}
+.lap-list:not(.is-empty){height:auto;grid-template-rows:none;grid-auto-rows:36px;overflow:visible}
+.extra-timers-list:not(.is-empty){height:auto;grid-template-rows:none;grid-auto-rows:39px;overflow:visible}
+
+
+/* v0.4.7 — Alarm List Compact Layout. Pure workspace, no heading/clock hero. */
+#panel-alarm{display:none;flex-direction:column;padding-top:18px}
+#panel-alarm.active{display:flex}
+.alarm-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:44px;margin:0 0 11px;flex:none}
+.alarm-toolbar h1{margin:0;font-size:21px;font-weight:700;line-height:1.2;letter-spacing:-.5px;color:#f5f4f1}
+.alarm-toolbar .counter-pill{margin-left:7px;vertical-align:middle}
+.alarm-toolbar-actions{display:flex;align-items:center;gap:17px;margin-left:auto}
+.alarm-toolbar .btn{height:38px;min-height:38px;padding:0 17px;font-size:12px;border-radius:8px;white-space:nowrap}
+.alarm-toolbar .page-nav{gap:9px}
+.alarm-list:not(.is-empty){height:auto;min-height:0;display:grid;grid-template-rows:none;grid-auto-rows:43px;row-gap:6px;overflow:hidden;align-content:start;flex:none}
+.alarm-list:not(.is-empty) .alarm-item{min-height:0;padding:0 13px;border-radius:7px;gap:13px}
+.alarm-item .alarm-time{font-size:22px;min-width:74px;letter-spacing:-.35px;line-height:1.1}
+.alarm-item .alarm-info strong{font-size:13px;font-weight:650;line-height:1.2}
+.alarm-item .alarm-info small{font-size:11px;line-height:1.25;margin-top:2px;color:#aaa8a2}
+.alarm-item .alarm-buttons{gap:7px}
+.alarm-item .mini-btn{height:27px;width:27px;border-radius:6px}
+.alarm-list.is-empty{height:70px;flex:none}
+.alarm-list.is-empty .empty{min-height:70px}
+@media(max-width:640px){
+  .alarm-toolbar{gap:8px}
+  .alarm-toolbar h1{font-size:17px}
+  .alarm-toolbar-actions{gap:8px}
+  .alarm-toolbar .btn{padding:0 10px;font-size:11px}
+  .alarm-item .alarm-info strong{font-size:12px}
+}
+
+
+/* v0.4.8 — Functional Minimalism. Workspace controls first; no oversized containers. */
+.top-navigation,.tab-panel{max-width:1240px}
+#panel-timer,#panel-stopwatch,#panel-settings{padding-top:25px}
+#panel-timer .page-title,#panel-stopwatch .page-title,#panel-settings .page-title{display:none}
+/* Alarm cards: comfortable type size while still fitting 11 rows on a 1080p monitor. */
+.alarm-list:not(.is-empty){grid-auto-rows:62px;row-gap:7px}
+.alarm-list:not(.is-empty) .alarm-item{padding:0 18px;gap:22px;border-radius:9px;min-height:62px}
+.alarm-item .alarm-time{font-size:28px;min-width:92px;font-weight:740;letter-spacing:-.65px}
+.alarm-item .alarm-info strong{font-size:16px;line-height:1.24;font-weight:650}
+.alarm-item .alarm-info small{font-size:12px;line-height:1.3;margin-top:3px;color:#b1afa9}
+.alarm-item .mini-btn{width:34px;height:34px;font-size:17px;border-radius:7px}
+.alarm-item .alarm-buttons{gap:9px}
+.alarm-item .toggle{width:43px;height:25px}
+.alarm-item .toggle:after{width:17px;height:17px}
+.alarm-item .toggle.on:after{left:21px}
+.alarm-toolbar{min-height:48px;margin-bottom:12px}
+.alarm-toolbar h1{font-size:23px}
+.alarm-toolbar .btn{height:42px;font-size:13px}
+/* Inline editor is part of the list — never opens a new window or overlay. */
+.alarm-list.has-inline-edit{grid-auto-rows:auto;overflow:hidden}
+.alarm-list.has-inline-edit .alarm-item{height:62px}
+.alarm-inline-editor{background:#1b1a19;border:1px solid #9a7c45;border-radius:10px;padding:15px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.inline-editor-fields{display:grid;grid-template-columns:160px minmax(180px,1fr) auto;align-items:end;gap:14px}
+.inline-editor-fields label{display:flex;flex-direction:column;gap:6px;min-width:0;font-size:12px;font-weight:650;color:#c7c5c0}
+.inline-editor-fields input{height:42px;width:100%;min-width:0;background:#111112;border:1px solid #494847;border-radius:7px;padding:0 12px;color:#f5f4f1;outline:none;font-size:16px}
+.inline-editor-fields input[type=time]{font-size:20px;font-weight:740;color-scheme:dark}
+.inline-editor-fields input:focus-visible{outline:1px solid #d5b36d;outline-offset:1px}
+.inline-days{display:flex;gap:5px;align-items:center;justify-content:flex-end;flex-wrap:nowrap;white-space:nowrap}
+.inline-days button{min-width:35px;height:36px;background:#242323;border:1px solid #454443;border-radius:6px;color:#d0ceca;font-size:12px;font-weight:680;padding:0 6px}
+.inline-days button[aria-pressed=true]{background:#c7a664;border-color:#c7a664;color:#171513}
+.inline-editor-actions{display:flex;justify-content:flex-end;gap:8px}
+.inline-editor-actions .btn{min-height:35px;padding:0 16px;font-size:12px}
+/* Timer: prominent count, slim progress, input and presets in a compact row. */
+#panel-timer .timer-layout{display:flex;flex-direction:column;align-items:center;height:auto;min-height:0;margin:0 0 19px;border:0;border-radius:0;background:transparent;overflow:visible;gap:26px}
+#panel-timer .timer-right{order:0;display:flex;flex-direction:column;align-items:center;gap:14px;padding:12px 0 0;border:0;background:transparent;width:100%}
+#panel-timer .timer-display{font-size:clamp(58px,5.2vw,88px);letter-spacing:-2px;font-weight:760;line-height:1.14;text-align:center;color:#f7f6f3}
+#panel-timer .timer-progress{width:min(100%,640px);height:5px;border:0;border-radius:50px;background:#353433;overflow:hidden}
+#panel-timer .timer-progress>div{width:100%;height:100%;border-radius:50px;background:#d5b36d;transition:width .15s linear}
+#panel-timer .ring-status{font-size:13px;font-weight:600;letter-spacing:0;color:#c7b57b}
+#panel-timer .actions{gap:10px}
+#panel-timer .actions .btn{min-width:138px;min-height:43px;font-size:13px}
+#panel-timer .timer-left{order:1;padding:0;border:0;background:transparent;width:min(100%,650px);display:flex;align-items:end;gap:20px}
+#panel-timer .timer-inputs{margin:0;flex:1.2;gap:9px}
+#panel-timer .timer-inputs label{font-size:12px;letter-spacing:0;color:#bebbb4;font-weight:650}
+#panel-timer .timer-inputs input{height:47px;font-size:24px;margin-top:5px}
+#panel-timer .time-sep{padding-bottom:12px;font-size:21px}
+#panel-timer .presets{margin:0 0 0;flex:1;gap:5px}
+#panel-timer .presets button{font-size:12px;min-height:42px;padding:6px 4px}
+#panel-timer .extra-timers-head{margin:15px 0 12px}
+#panel-timer .extra-timers-head h2{font-size:17px}
+#panel-timer .timer-extra-tools .btn{font-size:12px;min-height:35px}
+#panel-timer .extra-duration{height:35px;font-size:13px;width:110px}
+/* Stopwatch: only the reading and controls; show laps when they exist. */
+#panel-stopwatch .stopwatch-display{margin:0;height:auto;min-height:240px;padding:22px 0 14px;background:transparent;border:0;border-radius:0;box-shadow:none;gap:24px}
+#panel-stopwatch .stopwatch-digits{font-size:clamp(64px,6vw,104px);font-weight:760;letter-spacing:-2.4px;line-height:1;margin:0}
+#panel-stopwatch .stopwatch-digits span{font-size:.54em;color:#d5b36d}
+#panel-stopwatch .stopwatch-actions{gap:11px}
+#panel-stopwatch .stopwatch-actions .btn{min-height:44px;min-width:142px;font-size:13px}
+#panel-stopwatch .laps-head{margin:24px 0 10px}
+#panel-stopwatch .laps-head h2{font-size:17px}
+/* Settings: no duplicated title; controls large enough to read on 1080p. */
+#panel-settings .settings-v3{max-width:1240px;margin:4px 0 0;grid-template-columns:1fr 1fr;gap:18px}
+#panel-settings .settings-v3 .settings-card{padding:23px 25px;min-height:0}
+#panel-settings .settings-v3 .settings-kicker{font-size:16px;letter-spacing:0;font-weight:700}
+#panel-settings .settings-v3 .settings-heading{padding-bottom:15px}
+#panel-settings .settings-v3 .setting-row.compact{min-height:55px;padding:12px 0}
+#panel-settings .settings-v3 .setting-description strong,#panel-settings .settings-v3 .setting-audio-field label{font-size:14px}
+#panel-settings .settings-v3 .setting-audio-field{margin-top:16px;gap:10px}
+#panel-settings .settings-v3 .setting-inline output{font-size:13px}
+#panel-settings .settings-v3 .melody-trigger{min-height:40px;font-size:14px}
+#panel-settings .settings-v3 .sound-actions .btn{min-height:36px;font-size:12px}
+#panel-settings .settings-v3 .shortcuts-title{font-size:14px}
+#panel-settings .settings-v3 .shortcuts-always .shortcuts-grid{font-size:13px;gap:13px 10px}
+#panel-settings .settings-v3 .shortcuts-always kbd{font-size:12px}
+@media(max-width:1050px){
+ .inline-editor-fields{grid-template-columns:125px minmax(150px,1fr);gap:9px}
+ .inline-days{grid-column:1/-1;justify-content:flex-start}
+ .alarm-list.has-inline-edit .alarm-inline-editor{padding:10px 13px;gap:8px}
+ #panel-timer .timer-left{flex-direction:column;align-items:stretch;gap:11px}
+ #panel-timer .timer-display{font-size:62px}
+ #panel-timer .timer-layout{gap:15px}
+ #panel-stopwatch .stopwatch-digits{font-size:66px}
+ #panel-settings .settings-v3 .shortcuts-always .shortcuts-grid{font-size:11px}
+}
+@media(max-height:760px){
+ #panel-timer .timer-layout{gap:12px}
+ #panel-timer .timer-right{gap:9px}
+ #panel-stopwatch .stopwatch-display{min-height:200px}
+}
+/* Disabled alarms remain readable; only gold controls indicate active state. */
+.alarm-item.disabled{opacity:.74}
+
+/* v0.4.9 — instantly editable alarm rows and user-defined working days. */
+.alarm-list:not(.is-empty){grid-auto-rows:74px;row-gap:6px}
+.alarm-list .alarm-live-row{display:grid;grid-template-columns:104px minmax(0,1fr) 92px;align-items:center;gap:13px;min-width:0;background:#181819;border:1px solid #303033;border-radius:9px;padding:6px 12px;transition:border-color .12s}
+.alarm-live-row:focus-within{border-color:#9d804d}
+.alarm-live-row.disabled{opacity:.75}
+.alarm-live-row .alarm-edit-time,.alarm-live-row .alarm-edit-label{border:1px solid transparent;background:transparent;outline:none;color:#f4f3ef;border-radius:5px;padding:2px 4px;min-width:0}
+.alarm-live-row .alarm-edit-time{font-size:23px;font-weight:750;letter-spacing:-.6px;width:104px;height:38px;color-scheme:dark;cursor:text}
+.alarm-live-row .alarm-edit-label{font-size:15px;font-weight:700;height:28px;display:block;width:100%;max-width:500px}
+.alarm-live-row .alarm-edit-time:hover,.alarm-live-row .alarm-edit-label:hover{background:#242322}
+.alarm-live-row input:focus{border-color:#d3b374;background:#111113}
+.alarm-live-row .alarm-edit-center{min-width:0;display:flex;flex-direction:column;gap:4px}
+.alarm-live-row .alarm-day-line{display:flex;align-items:center;gap:12px;min-width:0;white-space:nowrap}
+.alarm-day-pills,.alarm-preset-pills{display:flex;align-items:center;gap:3px}
+.alarm-day-pills button,.alarm-preset-pills button,.workweek-days button{background:transparent;border:1px solid transparent;color:#9e9c98;border-radius:5px;min-height:25px;padding:0 5px;font-weight:650;font-size:11px;line-height:1}
+.alarm-day-pills button[aria-pressed=true]{color:#ddbd7c;background:#29241c;border-color:#53432a}
+.alarm-preset-pills button{font-size:10px;color:#a8a6a2;padding:0 5px;border-color:#343334}
+.alarm-preset-pills button[aria-pressed=true]{color:#e7c581;border-color:#997849;background:#2b261e}
+.alarm-day-pills button:hover,.alarm-preset-pills button:hover,.workweek-days button:hover{border-color:#a68a55}
+.alarm-edit-actions{display:flex;gap:10px;justify-content:flex-end;align-items:center}
+.alarm-edit-actions .mini-btn{width:27px;height:29px;font-size:20px}
+.alarm-live-row.saving{border-left-color:#8c754a}
+.alarm-live-row.save-error{border-color:#b96b66}
+.alarm-list.has-inline-edit .alarm-inline-editor{min-height:155px}
+.alarm-list.has-inline-edit .inline-days{grid-column:1/-1;justify-content:flex-start;gap:8px;white-space:normal}
+.alarm-list.has-inline-edit .inline-days .alarm-day-pills button{font-size:12px;min-height:34px;min-width:34px}
+.alarm-list.has-inline-edit .alarm-preset-pills button{min-height:31px;font-size:11px}
+.alarm-list.has-inline-edit{grid-auto-rows:auto}
+.alarm-list.has-inline-edit .alarm-live-row{height:74px}
+.settings-v3 .workweek-card{grid-column:1/-1;max-width:620px;min-height:0;padding-bottom:18px!important}
+.workweek-help{font-size:12px;color:#b8b5b0;margin:13px 0}
+.workweek-days{display:flex;gap:8px;flex-wrap:wrap}
+.workweek-days button{font-size:13px;min-width:48px;min-height:38px;border:1px solid #444242;background:#242323;color:#e3e0dc}
+.workweek-days button[aria-pressed=true]{color:#181614;background:#dbbb78;border-color:#dbbb78}
+.workweek-summary{font-size:12px;color:#bfb5a1;margin:14px 0 0}
+@media(max-width:1050px){
+.alarm-list:not(.is-empty){grid-auto-rows:91px}
+.alarm-list .alarm-live-row{grid-template-columns:98px minmax(0,1fr) 76px;gap:6px;padding:5px 7px}
+.alarm-live-row .alarm-edit-time{font-size:18px;width:96px}
+.alarm-live-row .alarm-edit-label{font-size:13px}
+.alarm-live-row .alarm-day-line{flex-wrap:wrap;gap:3px}
+.alarm-preset-pills button{font-size:10px;min-height:23px}
+.alarm-day-pills button{min-height:23px}
+.alarm-edit-actions{gap:5px}
+.alarm-edit-actions .mini-btn{width:24px}
+}
+@media(max-width:750px){.alarm-list:not(.is-empty){grid-auto-rows:115px}.alarm-live-row .alarm-day-line{white-space:normal}}
+
+/* Readable scheduling controls without increasing the alarm row height. */
+.alarm-day-pills button{font-size:12px;min-height:27px;min-width:25px}
+.alarm-preset-pills button{font-size:11px;min-height:27px}
+.settings-v3{grid-auto-rows:min-content;grid-template-rows:auto auto}
+.settings-v3 .workweek-card{max-width:620px;height:auto;align-self:start;justify-self:start}
+
+/* v0.4.10 — concise editable alarm rows and subdued disabled alarms. */
+.alarm-list:not(.is-empty){grid-auto-rows:70px;row-gap:6px}
+.alarm-list .alarm-live-row{grid-template-columns:98px minmax(0,1fr) 95px;column-gap:16px;min-height:70px;height:70px;padding:7px 15px;position:relative}
+.alarm-live-row .alarm-edit-time{appearance:none;-webkit-appearance:none;width:92px;height:42px;min-width:0;max-width:100%;padding:3px 4px;font-size:24px;font-weight:750;letter-spacing:0;font-variant-numeric:tabular-nums;text-align:left;color:#f4f3ef}
+.alarm-live-row .alarm-edit-label{height:28px;max-width:none;font-size:15px;line-height:1.25}
+.alarm-live-row .alarm-edit-center{gap:1px;justify-content:center}
+.alarm-live-row .schedule-summary{display:inline-flex;align-items:center;gap:8px;width:max-content;max-width:100%;height:26px;padding:0 7px;margin-left:-4px;background:transparent;border:1px solid transparent;border-radius:6px;color:#b9b4ab;font-size:12px;font-weight:550;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.alarm-live-row .schedule-summary:hover,.alarm-live-row .schedule-summary[aria-expanded=true]{background:#25231f;border-color:#514733;color:#e0c388}
+.alarm-live-row .schedule-summary .schedule-chevron{height:7px;width:7px;flex-shrink:0;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg);margin:-3px 3px 0 2px;transition:transform .12s}
+.alarm-live-row .schedule-summary[aria-expanded=true] .schedule-chevron{transform:rotate(225deg);margin-top:4px}
+.alarm-list.has-open-schedule{grid-auto-rows:minmax(70px,auto)}
+.alarm-list .alarm-live-row.schedule-open{height:138px;min-height:138px;grid-template-rows:54px 64px;padding-top:8px;padding-bottom:8px;border-color:#69583b;background:#1b1a18}
+.alarm-live-row .schedule-editor{grid-column:1/-1;grid-row:2;min-width:0;display:flex;align-items:center;gap:17px;border-top:1px solid #36332d;padding-top:9px;flex-wrap:wrap;align-content:start}
+.schedule-editor .alarm-day-pills,.schedule-editor .alarm-preset-pills{gap:5px}
+.schedule-editor button{min-height:33px!important;font-size:12px!important;padding:0 9px!important;border:1px solid #44413c!important;border-radius:6px!important;color:#d8d5ce;background:#202020}
+.schedule-editor button[aria-pressed=true]{color:#171512!important;background:#d8b774!important;border-color:#d8b774!important}
+.alarm-live-row.disabled{opacity:1!important;background:#111112;border-color:#222224}
+.alarm-live-row.disabled .alarm-edit-time,.alarm-live-row.disabled .alarm-edit-label{color:#9b9b9b}
+.alarm-live-row.disabled .schedule-summary{color:#62615e}
+.alarm-live-row.disabled .mini-btn{color:#757575;border-color:#29292a}
+.alarm-live-row.disabled .toggle:not(.on){opacity:.65}
+.alarm-live-row.disabled:not(:focus-within):not(.schedule-open) .alarm-edit-time,.alarm-live-row.disabled:not(:focus-within):not(.schedule-open) .alarm-edit-label{opacity:.76}
+.alarm-live-row.disabled:hover,.alarm-live-row.disabled:focus-within,.alarm-live-row.disabled.schedule-open{background:#191919;border-color:#3d3b38}
+.alarm-live-row.disabled:focus-within .alarm-edit-time,.alarm-live-row.disabled:focus-within .alarm-edit-label,.alarm-live-row.disabled.schedule-open .alarm-edit-time,.alarm-live-row.disabled.schedule-open .alarm-edit-label{color:#e2dfd9;opacity:1}
+@media(max-width:1050px){
+  .alarm-list:not(.is-empty){grid-auto-rows:76px}
+  .alarm-list .alarm-live-row{height:76px;min-height:76px;grid-template-columns:89px minmax(0,1fr) 78px;gap:8px;padding:6px 9px}
+  .alarm-live-row .alarm-edit-time{width:87px;font-size:20px}
+  .alarm-live-row .alarm-edit-label{font-size:14px}
+  .alarm-live-row .schedule-summary{font-size:11px}
+  .alarm-list .alarm-live-row.schedule-open{height:150px;min-height:150px;grid-template-rows:60px 74px}
+  .schedule-editor{gap:8px!important}
+  .schedule-editor button{padding:0 6px!important;min-height:30px!important;font-size:11px!important}
+}
+@media(max-width:750px){.alarm-list:not(.is-empty){grid-auto-rows:88px}.alarm-list .alarm-live-row{height:88px;min-height:88px}}
+
+/* v0.4.11: alarm deletion lives behind right-click, no visible cross. */
+.alarm-list .alarm-live-row{grid-template-columns:98px minmax(0,1fr) 49px}
+.alarm-live-row .alarm-edit-actions{gap:0;justify-content:flex-end}
+@media(max-width:1050px){.alarm-list .alarm-live-row{grid-template-columns:89px minmax(0,1fr) 43px}}
+
+/* v0.4.12: match real CSS row heights in the pagination calculation.
+   One expanded schedule adds only its additional pixels, not two full rows. */
+.alarm-list{--alarm-base-row-height:70px;--alarm-expanded-row-height:138px;--alarm-inline-editor-height:180px}
+@media(max-width:1050px){
+ .alarm-list{--alarm-base-row-height:76px;--alarm-expanded-row-height:150px;--alarm-inline-editor-height:190px}
+}
+@media(max-width:750px){
+ .alarm-list{--alarm-base-row-height:88px;--alarm-expanded-row-height:150px;--alarm-inline-editor-height:205px}
+}
+
+/* v0.4.13: On a maximized Windows window the usable viewport is often
+   ~1057px, not 1080px. Expanded schedules should not evict the last alarm
+   for a few pixels of unused reserve. Only compress spacing while one is open. */
+.alarm-list.has-open-schedule:not(.is-empty){
+  --alarm-base-row-height:68px;
+  row-gap:5px;
+  grid-auto-rows:minmax(68px,auto);
+}
+.alarm-list.has-open-schedule .alarm-live-row:not(.schedule-open){
+  height:68px;
+  min-height:68px;
+}
+@media(max-width:1050px){
+  .alarm-list.has-open-schedule:not(.is-empty){
+    --alarm-base-row-height:74px;
+    grid-auto-rows:minmax(74px,auto);
+  }
+  .alarm-list.has-open-schedule .alarm-live-row:not(.schedule-open){height:74px;min-height:74px}
+}
+@media(max-width:750px){
+  .alarm-list.has-open-schedule:not(.is-empty){
+    --alarm-base-row-height:86px;
+    grid-auto-rows:minmax(86px,auto);
+  }
+  .alarm-list.has-open-schedule .alarm-live-row:not(.schedule-open){height:86px;min-height:86px}
+}
+
+
+/* v0.4.14-dev — polished alarm interface refresh.
+   Presentation only: keep IDs, behavior, pagination math and autosave logic intact. */
+:root{
+  --bg:#0b0b0d;
+  --panel:#141416;
+  --border:#312c22;
+  --muted:#b3aea4;
+  --text:#f5f2ea;
+  --gold:#d8b46a;
+  --gold-soft:#f0d7a4;
+  --gold-dim:#8d7340;
+  --primary:#d8b46a;
+}
+body{
+  background:
+    radial-gradient(circle at left 62%,rgba(213,168,90,.12) 0,rgba(213,168,90,0) 22%),
+    radial-gradient(circle at right 28%,rgba(213,168,90,.10) 0,rgba(213,168,90,0) 26%),
+    linear-gradient(180deg,#090909 0%,#0d0d0f 100%);
+  color:var(--text);
+}
+.app-shell,.main{background:transparent}
+.main{padding-inline:clamp(26px,3vw,56px)}
+.top-navigation,.tab-panel{max-width:1088px}
+.top-navigation{
+  margin-top:24px;
+  gap:12px;
+}
+.top-navigation .nav-item{
+  height:56px;
+  min-height:56px;
+  border-radius:14px;
+  border:1px solid #2d2d31;
+  background:linear-gradient(180deg,rgba(22,22,25,.98),rgba(18,18,21,.98));
+  color:#d8d5ce;
+  font-size:15px;
+  font-weight:650;
+  transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+}
+.top-navigation .nav-item:hover{
+  background:linear-gradient(180deg,#222226,#18181b);
+  border-color:#444139;
+  color:#fbf7ed;
+  transform:translateY(-1px);
+}
+.top-navigation .nav-item.active{
+  background:linear-gradient(180deg,rgba(56,44,22,.88),rgba(34,29,21,.92));
+  border-color:#8d7340;
+  color:#f4e2b3;
+  box-shadow:inset 0 0 0 1px rgba(215,181,112,.14),0 0 0 1px rgba(215,181,112,.08),0 8px 22px rgba(0,0,0,.22);
+}
+.top-navigation .nav-item.active svg{color:#d8b46a}
+#panel-alarm{padding-top:26px}
+.alarm-toolbar{
+  min-height:52px;
+  margin-bottom:16px;
+  align-items:flex-end;
+}
+.alarm-toolbar h1{
+  font-size:42px;
+  font-weight:760;
+  line-height:1;
+  letter-spacing:-1.4px;
+  color:#f7f3ea;
+}
+.alarm-toolbar .counter-pill{
+  margin-left:10px;
+  padding:5px 10px;
+  border:1px solid #4a3d24;
+  border-radius:999px;
+  background:linear-gradient(180deg,#29231a,#211d18);
+  color:#edd49d;
+  font-weight:700;
+}
+.alarm-toolbar-actions{gap:14px}
+.page-nav{
+  gap:10px;
+  color:#aaa395;
+  font-size:12px;
+  font-weight:600;
+}
+.icon-btn{
+  width:30px;height:30px;border-radius:9px;
+  border:1px solid #3a342a;
+  background:#17171a;
+  color:#e3d5b2;
+}
+.icon-btn:hover:not(:disabled){background:#202024;border-color:#67542f}
+.alarm-toolbar .btn{height:44px;min-height:44px;border-radius:12px;padding:0 18px;font-size:14px}
+.btn{transition:background .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease}
+.btn-primary{
+  color:#191610;
+  border-color:#caa255;
+  background:linear-gradient(180deg,#f1d18f,#d9b061);
+  box-shadow:0 10px 28px rgba(199,155,78,.20),inset 0 1px 0 rgba(255,246,221,.5);
+}
+.btn-primary:hover:not(:disabled){
+  background:linear-gradient(180deg,#f5dab0,#ddb96e);
+  border-color:#ddb96e;
+}
+.btn-neutral,.btn-ghost{background:#17171a;border-color:#3a342a;color:#ece6d9}
+.btn-neutral:hover,.btn-ghost:hover{background:#202024;border-color:#67542f}
+.add-alarm{min-width:214px;font-weight:760}
+.plus{margin-right:6px}
+.alarm-list{--alarm-base-row-height:70px;--alarm-expanded-row-height:138px;--alarm-inline-editor-height:190px}
+.alarm-list:not(.is-empty){row-gap:8px;grid-auto-rows:70px}
+.alarm-list .alarm-live-row{
+  grid-template-columns:112px minmax(0,1fr) 64px;
+  min-height:70px;height:70px;
+  padding:7px 14px;
+  column-gap:16px;
+  border-radius:16px;
+  border:1px solid #2f2c26;
+  background:linear-gradient(90deg,rgba(21,21,22,.98),rgba(18,18,20,.98));
+  box-shadow:0 12px 30px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.02);
+  transition:transform .14s ease,border-color .14s ease,background .14s ease,box-shadow .14s ease;
+}
+.alarm-list .alarm-live-row:hover{
+  border-color:#4b4030;
+  background:linear-gradient(90deg,#1a1a1d,#141417);
+  transform:translateY(-1px);
+  box-shadow:0 18px 34px rgba(0,0,0,.20);
+}
+.alarm-live-row:focus-within{border-color:#997945;box-shadow:0 0 0 1px rgba(217,176,97,.18),0 18px 34px rgba(0,0,0,.22)}
+.alarm-live-row .alarm-edit-time{
+  width:96px;height:44px;padding:0 12px;
+  border-radius:14px;
+  border:1px solid #3a342a;
+  background:linear-gradient(180deg,#252219,#1b1a17);
+  color:#faf6ed;
+  font-size:25px;
+  font-weight:780;
+  letter-spacing:-.5px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.alarm-live-row .alarm-edit-time:hover{background:linear-gradient(180deg,#2b261c,#1f1d19);border-color:#524427}
+.alarm-live-row input:focus{background:#121214;border-color:#b99451}
+.alarm-live-row .alarm-edit-center{gap:6px;justify-content:center}
+.alarm-title-row{display:flex;align-items:center;gap:12px;min-width:0}
+.alarm-kind-badge{
+  width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;
+  border-radius:10px;border:1px solid #3f3526;
+  background:linear-gradient(180deg,#241f18,#191816);
+  color:#e6c587;font-size:15px;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.alarm-kind-break{color:#ebca8f}
+.alarm-kind-heart{color:#f0c29d}
+.alarm-kind-finish{color:#e7d8aa}
+.alarm-kind-study{color:#dfc893}
+.alarm-kind-work{color:#ecc67a}
+.alarm-kind-generic{color:#dcc59b}
+.alarm-live-row .alarm-edit-label{height:30px;font-size:16px;font-weight:720;padding-left:0;padding-right:0}
+.alarm-live-row .schedule-summary{
+  height:28px;
+  margin-left:42px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid transparent;
+  background:rgba(255,255,255,.02);
+  color:#bbb19e;
+  font-size:12px;
+  font-weight:600;
+}
+.alarm-live-row .schedule-summary:hover,.alarm-live-row .schedule-summary[aria-expanded=true]{background:#25211b;border-color:#5d4d2f;color:#e7cb92}
+.alarm-live-row .schedule-summary .schedule-chevron{margin-left:1px}
+.alarm-edit-actions{justify-content:center}
+.toggle{
+  width:44px;height:24px;border-radius:999px;border:1px solid #534a3d;
+  background:linear-gradient(180deg,#343438,#252529);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.04);
+}
+.toggle:after{top:2px;left:2px;width:18px;height:18px;background:#a59e90}
+.toggle.on{background:linear-gradient(180deg,#e2c37f,#c9a154);border-color:#d5b067;box-shadow:0 0 12px rgba(216,180,106,.18)}
+.toggle.on:after{left:22px;background:#fffdf7}
+.alarm-list.has-open-schedule:not(.is-empty){--alarm-base-row-height:68px;row-gap:5px;grid-auto-rows:minmax(68px,auto)}
+.alarm-list.has-open-schedule .alarm-live-row:not(.schedule-open){height:68px;min-height:68px}
+.alarm-list .alarm-live-row.schedule-open{
+  height:138px;min-height:138px;
+  grid-template-rows:54px 64px;
+  padding-top:9px;padding-bottom:10px;
+  border-color:#675536;
+  background:linear-gradient(180deg,#1b1a18,#161513);
+}
+.alarm-live-row .schedule-editor{
+  gap:12px;
+  border-top:1px solid #2f2b25;
+  padding-top:10px;
+}
+.schedule-editor .alarm-day-pills,.schedule-editor .alarm-preset-pills{gap:6px}
+.schedule-editor button,.alarm-day-pills button,.alarm-preset-pills button,.workweek-days button{
+  border-radius:999px!important;
+  border:1px solid #433c32!important;
+  background:#1e1d1b!important;
+  color:#ddd8ce!important;
+  min-height:31px!important;
+  padding:0 10px!important;
+  font-size:12px!important;
+  font-weight:650!important;
+}
+.schedule-editor button[aria-pressed=true],.alarm-day-pills button[aria-pressed=true],.alarm-preset-pills button[aria-pressed=true],.workweek-days button[aria-pressed=true]{
+  background:linear-gradient(180deg,#e4c98c,#c8a158)!important;
+  border-color:#d7b16b!important;
+  color:#17140f!important;
+}
+.alarm-live-row.disabled{background:linear-gradient(90deg,#111113,#0e0e10);border-color:#242428}
+.alarm-live-row.disabled .alarm-edit-time{background:linear-gradient(180deg,#1c1c1f,#141417);color:#9d9a93;border-color:#2c2b2f}
+.alarm-live-row.disabled .alarm-edit-label{color:#a19d95}
+.alarm-live-row.disabled .schedule-summary{color:#6f6b65}
+.alarm-live-row.disabled .alarm-kind-badge{background:#171719;border-color:#29292d;color:#8f8a80}
+.alarm-inline-editor{
+  border-radius:18px;
+  border:1px solid #5a4a2e;
+  background:linear-gradient(180deg,#171614,#111113);
+  box-shadow:0 16px 34px rgba(0,0,0,.18);
+}
+.inline-editor-fields label{color:#d2ccbe;font-size:12px}
+.inline-editor-fields input{height:44px;border-radius:12px;border-color:#3c372d;background:#131316;color:#f6f1e7}
+.inline-editor-fields input[type=time]{font-size:21px}
+.inline-days button{border-radius:999px;background:#1e1d1b;border-color:#433c32;color:#e3ddcf}
+.inline-days button[aria-pressed=true]{background:linear-gradient(180deg,#e4c98c,#c8a158);border-color:#d7b16b;color:#17140f}
+.inline-editor-actions .btn{min-height:40px;border-radius:12px}
+.empty{border-radius:18px;border-color:#3a3224;background:linear-gradient(180deg,#151517,#111114);color:#bcb4a5}
+.empty .empty-glyph, .extra-empty .empty-glyph{color:#dfc485}
+@media(max-width:1050px){
+  .alarm-toolbar h1{font-size:34px}
+  .alarm-toolbar .btn{height:42px;min-height:42px}
+  .alarm-list{--alarm-base-row-height:76px;--alarm-expanded-row-height:154px;--alarm-inline-editor-height:198px}
+  .alarm-list:not(.is-empty){grid-auto-rows:76px}
+  .alarm-list .alarm-live-row{grid-template-columns:100px minmax(0,1fr) 56px;height:76px;min-height:76px;padding:7px 10px;column-gap:10px}
+  .alarm-live-row .alarm-edit-time{width:88px;font-size:21px}
+  .alarm-kind-badge{width:28px;height:28px;flex-basis:28px}
+  .alarm-live-row .alarm-edit-label{font-size:14px}
+  .alarm-live-row .schedule-summary{margin-left:40px;font-size:11px}
+  .alarm-list .alarm-live-row.schedule-open{height:154px;min-height:154px;grid-template-rows:60px 76px}
+  .alarm-list.has-open-schedule:not(.is-empty){--alarm-base-row-height:74px;grid-auto-rows:minmax(74px,auto)}
+  .alarm-list.has-open-schedule .alarm-live-row:not(.schedule-open){height:74px;min-height:74px}
+}
+@media(max-width:750px){
+  .main{padding-inline:16px}
+  .top-navigation{gap:8px}
+  .top-navigation .nav-item{height:50px;min-height:50px;font-size:12px;gap:6px;padding:0 8px}
+  .alarm-toolbar{align-items:flex-start;flex-direction:column}
+  .alarm-toolbar h1{font-size:28px}
+  .alarm-toolbar-actions{width:100%;justify-content:space-between;gap:8px}
+  .alarm-toolbar .btn{padding:0 14px;font-size:12px}
+  .alarm-list{--alarm-base-row-height:88px;--alarm-expanded-row-height:162px;--alarm-inline-editor-height:210px}
+  .alarm-list:not(.is-empty){grid-auto-rows:88px}
+  .alarm-list .alarm-live-row{grid-template-columns:90px minmax(0,1fr) 52px;height:88px;min-height:88px}
+  .alarm-live-row .alarm-edit-time{width:82px;height:42px;font-size:19px}
+  .alarm-title-row{gap:8px}
+  .alarm-kind-badge{width:26px;height:26px;flex-basis:26px;font-size:13px}
+  .alarm-live-row .schedule-summary{margin-left:34px}
+  .alarm-list .alarm-live-row.schedule-open{height:162px;min-height:162px}
+  .alarm-list.has-open-schedule:not(.is-empty){--alarm-base-row-height:86px;grid-auto-rows:minmax(86px,auto)}
+  .alarm-list.has-open-schedule .alarm-live-row:not(.schedule-open){height:86px;min-height:86px}
+}
+
+/* v0.4.15 — Visual Refinement. SVG icons, alignment, calmer card surfaces.
+   Geometry and CSS variables are synchronized with alarm pagination. */
+#panel-alarm{padding-top:23px}
+.alarm-toolbar{margin-bottom:13px}
+.alarm-toolbar h1{font-size:39px;letter-spacing:-1.1px}
+.alarm-list .alarm-live-row{
+  border-radius:13px;
+  border-color:#302d29;
+  background:linear-gradient(90deg,#19191b,#151517);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018);
+  transition:border-color .15s ease,background-color .15s ease,box-shadow .15s ease;
+}
+.alarm-list .alarm-live-row:hover{
+  border-color:#665333;
+  background:linear-gradient(90deg,#1e1c1a,#171719);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+  transform:none;
+}
+.alarm-list .alarm-live-row:focus-within{
+  border-color:#a1824b;
+  box-shadow:inset 0 0 0 1px rgba(215,182,120,.12);
+}
+.alarm-live-row .alarm-edit-center{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+  min-width:0;
+  height:100%;
+}
+.alarm-kind-badge{
+  width:30px;
+  height:30px;
+  flex:0 0 30px;
+  border-radius:9px;
+  background:transparent;
+  border-color:transparent;
+  box-shadow:none;
+  color:#d7b577;
+}
+.alarm-kind-badge svg{
+  display:block;
+  width:21px;
+  height:21px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.75;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.alarm-edit-copy{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  gap:2px;
+  min-width:0;
+  flex:1;
+}
+.alarm-live-row .alarm-edit-label{
+  height:25px;
+  min-height:25px;
+  line-height:23px;
+  padding:0 4px;
+  margin-left:-4px;
+  font-size:15px;
+  font-weight:700;
+}
+.alarm-live-row .schedule-summary{
+  margin:0 0 0 -6px;
+  height:22px;
+  min-height:22px;
+  padding:0 7px;
+  border-radius:7px;
+  background:transparent;
+  color:#b7b0a3;
+  font-size:11.5px;
+  font-weight:550;
+  line-height:19px;
+}
+.alarm-live-row .schedule-summary:hover,
+.alarm-live-row .schedule-summary[aria-expanded=true]{background:#24201a;border-color:#5d4d2f;color:#e7cb92}
+.alarm-live-row .alarm-edit-time{
+  border-radius:11px;
+  background:linear-gradient(180deg,#26231d,#1d1b18);
+  border-color:#373127;
+  box-shadow:none;
+}
+.alarm-live-row.disabled{
+  background:#111113;
+  border-color:#242426;
+}
+.alarm-live-row.disabled .alarm-kind-badge{
+  background:transparent;
+  border-color:transparent;
+  color:#77746e;
+}
+.alarm-live-row.disabled .alarm-kind-badge svg{stroke:currentColor}
+.alarm-live-row.disabled .alarm-edit-label{color:#94918a}
+.alarm-live-row.disabled .schedule-summary{color:#827b70}
+.alarm-list .alarm-live-row.schedule-open{
+  border-color:#79613b;
+  background:linear-gradient(180deg,#1d1b17,#161617);
+}
+.alarm-list.has-open-schedule .alarm-live-row:not(.schedule-open){box-shadow:none}
+@media(max-width:1050px){
+  .alarm-toolbar h1{font-size:32px}
+  .alarm-live-row .alarm-edit-center{gap:9px}
+  .alarm-kind-badge{width:27px;height:27px;flex-basis:27px}
+  .alarm-kind-badge svg{width:19px;height:19px}
+  .alarm-live-row .alarm-edit-label{font-size:14px}
+  .alarm-live-row .schedule-summary{margin-left:-6px;font-size:11px}
+}
+@media(max-width:750px){
+  .alarm-toolbar h1{font-size:27px}
+  .alarm-live-row .alarm-edit-center{gap:6px}
+  .alarm-kind-badge{width:25px;height:25px;flex-basis:25px}
+  .alarm-kind-badge svg{width:18px;height:18px}
+  .alarm-live-row .alarm-edit-label{font-size:13px}
+  .alarm-live-row .schedule-summary{font-size:10.5px}
+}
+@media(prefers-reduced-motion:reduce){
+  .alarm-list .alarm-live-row{transition:none}
+}
+
+
+/* v0.4.16 — Final UI Polish. Tighten field focus, soften active outlines, and refine expanded spacing.
+   Preserve the compact 11-alarm geometry and expanded-row pagination math. */
+.alarm-list .alarm-live-row{
+  border-color:#2f2c28;
+}
+.alarm-list .alarm-live-row:focus-within{
+  border-color:#786542;
+  box-shadow:inset 0 0 0 1px rgba(215,182,120,.08);
+}
+.alarm-edit-copy{
+  gap:3px;
+}
+.alarm-live-row .alarm-edit-label{
+  width:fit-content;
+  max-width:100%;
+  min-width:0;
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:7px;
+  box-shadow:none;
+  transition:background .14s ease,border-color .14s ease,color .14s ease;
+}
+.alarm-live-row .alarm-edit-label:hover{
+  background:rgba(255,255,255,.02);
+}
+.alarm-live-row .alarm-edit-label:focus{
+  background:#1d1a17;
+  border-color:#4c4030;
+}
+.alarm-live-row .schedule-summary{
+  margin-left:-4px;
+}
+.alarm-list .alarm-live-row.schedule-open{
+  border-color:#5a4c33;
+  background:linear-gradient(180deg,#1a1916,#151516);
+  box-shadow:inset 0 0 0 1px rgba(215,182,120,.05);
+}
+.alarm-live-row .schedule-editor{
+  gap:10px 8px;
+  padding-top:12px;
+  border-top:1px solid #2f2b25;
+}
+.schedule-editor .alarm-day-pills,.schedule-editor .alarm-preset-pills{
+  gap:5px;
+}
+@media(max-width:1050px){
+  .alarm-live-row .alarm-edit-label{width:fit-content;max-width:100%;}
+  .alarm-list .alarm-live-row.schedule-open{box-shadow:inset 0 0 0 1px rgba(215,182,120,.05);}
+  .alarm-live-row .schedule-editor{padding-top:11px;gap:9px 7px;}
+}
+@media(max-width:750px){
+  .alarm-live-row .schedule-editor{padding-top:10px;gap:8px 6px;}
+}

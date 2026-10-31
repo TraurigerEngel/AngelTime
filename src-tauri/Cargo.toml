@@ -1,0 +1,28 @@
+[package]
+name = "angeltime"
+version = "0.4.22"
+description = "AngelTime — будильник, таймер и секундомер"
+authors = ["Trauriger Engel"]
+edition = "2021"
+
+[lib]
+name = "angeltime_lib"
+# Windows desktop only. The EXE links angeltime_lib as an rlib.
+# Do not build an unused cdylib: localized MSVC `Creating library ... .lib/.exp`
+# output can otherwise be reported as linker_messages warnings by rustc.
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-notification = "2"
+tauri-plugin-single-instance = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde", "clock"] }
+# Pin 0.20 API: OutputStream + Sink + MP3 decoder (no 0.21 breaking changes).
+rodio = { version = "=0.20.1", default-features = false, features = ["symphonia-mp3"] }
+base64 = "0.22"
+

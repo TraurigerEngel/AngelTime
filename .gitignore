@@ -1,0 +1,13 @@
+node_modules/
+src-tauri/target/
+src-tauri/gen/
+dist/
+Backup_*/
+*.log
+*.bak
+*.backup
+.DS_Store
+.vs/
+.idea/
+*.user
+Thumbs.db

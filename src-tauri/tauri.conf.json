@@ -1,0 +1,43 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "AngelTime",
+  "version": "0.4.22",
+  "identifier": "ru.traurigerengel.angeltime",
+  "build": {
+    "frontendDist": "../web"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "security": {
+      "csp": "default-src 'self'; connect-src ipc: http://ipc.localhost; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'"
+    },
+    "windows": [
+      {
+        "label": "main",
+        "title": "AngelTime",
+        "width": 1060,
+        "height": 690,
+        "minWidth": 900,
+        "minHeight": 690,
+        "resizable": true,
+        "maximizable": true,
+        "center": false,
+        "backgroundColor": "#0c0c0d",
+        "maximized": true
+      }
+    ]
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "nsis"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "shortDescription": "Будильник, таймер и секундомер"
+  }
+}

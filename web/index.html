@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>AngelTime</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="visual-0417.css" />
+  <link rel="stylesheet" href="visual-0418.css" />
+  <link rel="stylesheet" href="visual-0421.css" />
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <main class="main" id="main">
+      <nav class="top-navigation" aria-label="Переключение разделов">
+        <button class="nav-item active" type="button" data-tab="alarm" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a8 8 0 0 0-8 8c0 3.3-1.5 4.8-2 6h20c-.5-1.2-2-2.7-2-6a8 8 0 0 0-8-8ZM9 21h6"/><path d="M12 7v5l3 2"/></svg><span>Будильник</span></button>
+        <button class="nav-item" type="button" data-tab="timer" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 13l3-4M9 2h6M18.5 5.5l2 2"/></svg><span>Таймер</span></button>
+        <button class="nav-item" type="button" data-tab="stopwatch" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 7v6l3.2 2.2M9 2h6"/></svg><span>Секундомер</span></button>
+        <button class="nav-item" type="button" data-tab="settings" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.6-2-3.4-2.4.9a7 7 0 0 0-1.8-1.1l-.4-2.5h-4l-.4 2.5a7 7 0 0 0-1.8 1.1l-2.4-.9-2 3.4 2 1.6a7 7 0 0 0 0 2l-2 1.6 2 3.4 2.4-.9a7 7 0 0 0 1.8 1.1l.4 2.5h4l.4-2.5a7 7 0 0 0 1.8-1.1l2.4.9 2-3.4-2-1.6a7 7 0 0 0 .1-1Z"/></svg><span>Настройки</span></button>
+      </nav>
+
+      <section class="tab-panel active" id="panel-alarm" aria-labelledby="alarmTitle">
+        <div class="alarm-toolbar">
+          <h1 id="alarmTitle">Будильники <span class="counter-pill hidden" id="alarmsTotal">0</span></h1>
+          <div class="alarm-toolbar-actions">
+            <div class="page-nav" aria-label="Страницы будильников"><button type="button" class="icon-btn" id="alarmPrev" aria-label="Предыдущая страница">‹</button><span id="alarmPage">1 / 1</span><button type="button" class="icon-btn" id="alarmNext" aria-label="Следующая страница">›</button></div>
+            <button type="button" class="btn btn-primary add-alarm" id="addAlarm"><span class="plus">＋</span> Новый будильник</button>
+          </div>
+        </div>
+        <div id="alarmList" class="alarm-list"><div class="empty">Будильников нет</div></div>
+      </section>
+
+      <section class="tab-panel" id="panel-timer" aria-label="Таймер">
+        <header class="refined-section-head">
+          <div><h1>Таймер</h1><p>Точное время для каждой задачи</p></div>
+        </header>
+        <div class="timer-layout" aria-label="Основной таймер">
+          <div class="timer-right">
+            <span class="refined-eyebrow">ОБРАТНЫЙ ОТСЧЁТ</span>
+            <div class="timer-display mono" id="timerDisplay">00:05:00</div>
+            <div class="timer-progress" role="progressbar" aria-label="Оставшееся время" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" id="timerProgressTrack"><div id="timerProgress"></div></div>
+            <span class="ring-status hidden" id="timerStatus" role="status">Готов к запуску</span>
+            <div class="actions"><button type="button" id="timerToggle" class="btn btn-primary action-primary">▶ Запустить</button><button type="button" id="timerReset" class="btn btn-neutral">↺ Сбросить</button></div>
+          </div>
+          <div class="timer-left">
+            <div class="refined-config-head"><strong>Установить время</strong></div>
+            <div class="timer-inputs"><label>Часы<input type="number" id="timerHours" min="0" max="99" value="0" inputmode="numeric" /></label><span class="time-sep">:</span><label>Минуты<input type="number" id="timerMinutes" min="0" max="59" value="5" inputmode="numeric" /></label><span class="time-sep">:</span><label>Секунды<input type="number" id="timerSeconds" min="0" max="59" value="0" inputmode="numeric" /></label></div>
+            <div class="presets"><button type="button" data-seconds="60">1 мин</button><button type="button" data-seconds="300" class="selected">5 мин</button><button type="button" data-seconds="600">10 мин</button><button type="button" data-seconds="1500">25 мин</button></div>
+          </div>
+        </div>
+        <div class="extra-timers-head"><div><h2>Ещё таймеры <span class="counter-pill hidden" id="extraTimerCount">0</span></h2></div><div class="timer-extra-tools"><input type="text" class="extra-duration mono" id="extraDuration" value="00:05:00" aria-label="Длительность нового таймера в формате чч:мм:сс" maxlength="8" /><button type="button" class="btn btn-neutral" id="addExtraTimer">＋ Запустить ещё</button><div class="extra-page-nav" id="extraPageNav" aria-label="Страницы дополнительных таймеров"><button type="button" class="icon-btn" id="extraPrev" aria-label="Предыдущие таймеры">‹</button><span id="extraPage">1 / 1</span><button type="button" class="icon-btn" id="extraNext" aria-label="Следующие таймеры">›</button></div></div></div>
+        <div class="extra-timers-list" id="extraTimersList"></div>
+      </section>
+
+      <section class="tab-panel" id="panel-stopwatch" aria-label="Секундомер">
+        <header class="refined-section-head">
+          <div><h1>Секундомер</h1><p>Точность до сотых секунды</p></div>
+        </header>
+        <div class="stopwatch-display"><span class="refined-eyebrow">ИЗМЕРЕНИЕ ВРЕМЕНИ</span><div class="stopwatch-digits mono" id="stopwatchDisplay">00:00:00<span>.00</span></div><div class="stopwatch-actions"><button type="button" id="stopwatchToggle" class="btn btn-primary">▶ Запустить</button><button type="button" id="stopwatchReset" class="btn btn-ghost">↺ Сброс</button></div></div>
+      </section>
+      <section class="tab-panel" id="panel-settings" aria-label="Настройки">
+        <header class="refined-section-head">
+          <div><h1>Настройки</h1><p>Звук, уведомления и личное расписание</p></div>
+        </header>
+        <div class="settings-layout settings-v3">
+          <div class="settings-card">
+            <div class="settings-heading"><span class="settings-kicker">Звук</span></div>
+            <div class="setting-row compact"><div class="setting-description"><strong>Звук сигналов</strong></div><button type="button" id="settingSound" class="toggle on" role="switch" aria-label="Звук сигналов" aria-checked="true"></button></div>
+            <div class="setting-audio-field">
+              <label id="alarmMelodyLabel" for="alarmMelodyButton">Мелодия будильника</label>
+              <!-- Native select preserves existing Rust-facing data flow; custom list avoids the Windows browser popup. -->
+              <select id="alarmMelody" class="melody-native-select" tabindex="-1" aria-hidden="true"><option value="default">アリシャ — стандартная</option><option value="system">Системный звук Windows</option><option value="custom">Мой MP3</option></select>
+              <div class="melody-picker" id="melodyPicker">
+                <button class="melody-trigger" type="button" id="alarmMelodyButton" aria-haspopup="listbox" aria-expanded="false" aria-controls="melodyOptions" aria-labelledby="alarmMelodyLabel alarmMelodyValue"><span id="alarmMelodyValue">アリシャ — стандартная</span><span class="melody-chevron" aria-hidden="true"></span></button>
+                <div class="melody-options hidden" id="melodyOptions" role="listbox" aria-label="Выбор мелодии">
+                  <button class="melody-option" type="button" role="option" data-melody="default" aria-selected="true">アリシャ — стандартная</button>
+                  <button class="melody-option" type="button" role="option" data-melody="system" aria-selected="false">Системный звук Windows</button>
+                  <button class="melody-option" type="button" role="option" data-melody="custom" aria-selected="false">Мой MP3</button>
+                </div>
+              </div>
+            </div>
+            <div class="setting-audio-field"><div class="setting-inline"><label for="alarmVolume">Громкость мелодии</label><output id="alarmVolumeValue">75%</output></div><input type="range" id="alarmVolume" min="0" max="100" step="5" value="75" /></div>
+            <div class="setting-audio-field"><div class="setting-inline"><label for="alarmFade">Плавное нарастание</label><output id="alarmFadeValue">5 сек</output></div><input type="range" id="alarmFade" min="0" max="30" step="1" value="5" /></div>
+            <div class="sound-actions"><button type="button" class="btn btn-neutral" id="importMelody">＋ Свой MP3</button><input type="file" id="customAudioFile" accept=".mp3,audio/mpeg" hidden /><button class="btn btn-neutral" id="previewSound" type="button">▶ Слушать</button><button type="button" class="btn btn-ghost" id="stopPreviewSound">■ Стоп</button></div>
+            <div class="settings-notice audio-notice hidden" id="soundNotice"></div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-heading"><span class="settings-kicker">Приложение</span></div>
+            <div class="setting-row compact"><div class="setting-description"><strong>Уведомления Windows</strong></div><button type="button" id="settingNotifications" class="toggle on" role="switch" aria-label="Уведомления Windows" aria-checked="true"></button></div>
+            <div class="setting-row compact"><div class="setting-description"><strong>Меньше анимаций</strong></div><button type="button" id="settingMotion" class="toggle" role="switch" aria-label="Меньше анимаций" aria-checked="false"></button></div>
+            <div class="shortcuts shortcuts-always" aria-label="Горячие клавиши"><div class="shortcuts-title">Горячие клавиши</div><div class="shortcuts-grid"><span><kbd>Ctrl</kbd> + <kbd>1–4</kbd> — вкладки</span><span><kbd>N</kbd> — будильник</span><span><kbd>Пробел</kbd> — старт / пауза</span><span><kbd>F11</kbd> — полный экран</span><span><kbd>Esc</kbd> — выйти из полного экрана</span></div></div>
+          </div>
+          <div class="settings-card workweek-card">
+            <div class="settings-heading"><span class="settings-kicker">Моё расписание</span></div>
+            <p class="workweek-help">Выбери рабочие дни. Остальные автоматически станут выходными.</p>
+            <div id="workDays" class="workweek-days" aria-label="Мои рабочие дни">
+              <button type="button" data-work-day="0" aria-pressed="true">Пн</button><button type="button" data-work-day="1" aria-pressed="true">Вт</button><button type="button" data-work-day="2" aria-pressed="true">Ср</button><button type="button" data-work-day="3" aria-pressed="true">Чт</button><button type="button" data-work-day="4" aria-pressed="true">Пт</button><button type="button" data-work-day="5" aria-pressed="false">Сб</button><button type="button" data-work-day="6" aria-pressed="false">Вс</button>
+            </div>
+            <p id="workDaysInfo" class="workweek-summary">Мои выходные: Сб, Вс</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="overlay hidden delete-overlay" id="deleteOverlay" role="presentation">
+    <div class="dialog delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="deleteTitle" aria-describedby="deleteBody">
+      <h2 id="deleteTitle">Удалить?</h2>
+      <p id="deleteBody"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-neutral" id="cancelDelete">Отмена</button>
+        <button type="button" class="btn btn-primary" id="approveDelete">Удалить</button>
+      </div>
+    </div>
+  </div>
+  <div class="overlay hidden alert-overlay" id="alertOverlay" role="presentation"><div class="dialog alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="alertTitle"><div class="alert-symbol">♪</div><h2 id="alertTitle">Будильник</h2><p id="alertBody">Время!</p><div class="dialog-actions"><button type="button" class="btn btn-neutral" id="snoozeAlert">Отложить на 5 минут</button><button type="button" class="btn btn-primary" id="dismissAlert">Остановить</button></div></div></div>
+  <div class="toast hidden" id="toast" role="status"></div>
+</body>
+</html>

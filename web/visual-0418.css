@@ -1,0 +1,45 @@
+/* AngelTime v0.4.18 — light digit motion, lap-free stopwatch, calm numeric inputs. */
+.at-number-inner {
+  display:inline-flex;align-items:baseline;justify-content:center;white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.at-number-main {display:inline-flex;align-items:baseline;white-space:nowrap;}
+.at-number-digit,.at-number-separator,.at-number-text {display:inline-block;text-align:center;white-space:pre;}
+.at-number-digit {width:.64em;}
+.at-number-separator {width:.27em;}
+.at-number-text {width:auto;}
+.at-number-fraction {display:inline-block;white-space:pre;}
+/* Keep fractional precision readable, but avoid motion on the hundredths. */
+#panel-stopwatch #stopwatchDisplay .at-number-inner {font-size:1em;line-height:inherit;}
+#panel-stopwatch #stopwatchDisplay .at-number-main {font-size:1em;}
+#panel-stopwatch #stopwatchDisplay .at-number-digit,
+#panel-stopwatch #stopwatchDisplay .at-number-separator,
+#panel-stopwatch #stopwatchDisplay .at-number-text {font-size:1em;color:inherit;letter-spacing:0;}
+#panel-stopwatch #stopwatchDisplay .at-number-fraction {
+  font-size:.48em;color:#dab778;font-weight:730;letter-spacing:-1.4px;
+}
+#panel-stopwatch .stopwatch-actions .btn {min-width:158px;}
+/* Inputs must retain native caret behavior, so smooth their focus styling rather than replacing text nodes. */
+.alarm-live-row .alarm-edit-time,
+#panel-timer .timer-inputs input,
+#panel-timer .extra-duration {font-variant-numeric:tabular-nums;transition:background-color .2s ease,border-color .2s ease,box-shadow .2s ease;}
+#panel-timer .extra-timer-time {font-variant-numeric:tabular-nums;}
+#panel-timer .timer-progress>div {transition:width .25s ease-out;}
+/* No residual badge layout beside the three section headings. */
+.refined-section-head {justify-content:flex-start;}
+@media (prefers-reduced-motion:reduce){
+ .at-number-digit,.at-number-separator{animation:none!important;transition:none!important;}
+ #panel-timer .timer-progress>div{transition:none!important;}
+}
+.reduced-motion .at-number-digit,.reduced-motion .at-number-separator {animation:none!important;transition:none!important;}
+.reduced-motion #panel-timer .timer-progress>div{transition:none!important;}
+
+/* v0.4.20 — composite-only continuous progress, without 1% width steps.
+   The animation is driven by JS using the monotonic presentation clock. */
+#panel-timer .timer-progress>div {
+  width:100%;
+  transform:scaleX(1);
+  transform-origin:left center;
+  transition:none!important;
+  will-change:transform;
+}

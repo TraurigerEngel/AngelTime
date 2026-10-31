@@ -1,0 +1,265 @@
+/* AngelTime v0.4.21 — Unified Design System.
+   All rules in this file are presentational. Keep native IDs, layout pagination,
+   high-frequency timekeeping, saved state and reduced-motion preferences intact. */
+:root {
+  --ui-bg: #0d0d0f;
+  --ui-surface: #171719;
+  --ui-surface-high: #1c1b1b;
+  --ui-surface-input: #111113;
+  --ui-border: #32302c;
+  --ui-border-hover: #574932;
+  --ui-text: #f5f2ec;
+  --ui-secondary: #b8b1a5;
+  --ui-muted: #918b82;
+  --ui-gold: #d9b66e;
+  --ui-gold-light: #f0d194;
+  --ui-radius: 13px;
+  --ui-radius-small: 9px;
+  --ui-focus: #e6c37c;
+  --ui-surface-gradient: linear-gradient(120deg,#1b1a1b 0%,#151517 75%);
+  --ui-ease: cubic-bezier(.22,.78,.28,1);
+}
+
+/* Shared foundation: no competing accent colors or typography systems. */
+body,.app-shell,.main { color:var(--ui-text); }
+.top-navigation,.tab-panel { max-width:1088px; }
+.top-navigation { gap:10px; }
+.top-navigation .nav-item {
+  min-height:50px;height:50px;border-radius:var(--ui-radius);
+  background:linear-gradient(180deg,#19191b,#151517);
+  border-color:var(--ui-border);color:#e0dbd2;
+  font-size:13px;font-weight:690;
+  box-shadow:none;transform:none;
+  transition:color .16s var(--ui-ease),border-color .16s var(--ui-ease),background .16s var(--ui-ease);
+}
+.top-navigation .nav-item.active {
+  border-color:#8e7549;
+  background:linear-gradient(180deg,#302719,#241f18);
+  color:var(--ui-gold-light);
+  box-shadow:inset 0 0 0 1px rgba(225,187,110,.07);
+}
+.top-navigation .nav-item.active svg { color:var(--ui-gold); }
+.top-navigation .nav-item:not(.active):hover { background:#222124;border-color:#625138;color:#fff1d2; }
+
+/* Matching titles across all four screens. Alarm header keeps its exact height
+   so the verified 11-row schedule layout cannot regress. */
+.alarm-toolbar h1,.refined-section-head h1 {
+  font-size:38px;font-weight:750;line-height:1.14;
+  letter-spacing:-1.15px;color:var(--ui-text);
+}
+.refined-section-head { margin-bottom:18px; }
+.refined-section-head p { margin-top:5px;color:var(--ui-secondary);font-size:12px;line-height:1.45; }
+#panel-timer,#panel-stopwatch,#panel-settings { padding-top:24px; }
+
+/* All interactive controls use the same shape and tactile response. */
+.btn,#panel-timer .actions .btn,#panel-timer .timer-extra-tools .btn,
+#panel-stopwatch .stopwatch-actions .btn,#panel-settings .sound-actions .btn,
+.alarm-toolbar .btn {
+  min-height:41px;border-radius:10px;font-size:12.5px;font-weight:700;
+  transition:color .16s var(--ui-ease),border-color .16s var(--ui-ease),
+    background .16s var(--ui-ease),box-shadow .16s var(--ui-ease);
+}
+.btn-primary,.dialog-actions .btn-primary {
+  color:#20180c;background:linear-gradient(180deg,#f0d28f 0%,#d8ad60 100%);
+  border:1px solid #cb9f53;
+  box-shadow:inset 0 1px 0 rgba(255,244,208,.44),0 5px 14px rgba(0,0,0,.15);
+}
+.btn-primary:hover:not(:disabled),.dialog-actions .btn-primary:hover:not(:disabled) {
+  color:#1d160d;background:linear-gradient(180deg,#f6dea7,#e1ba76);border-color:#e2bd77;
+}
+.btn-neutral,.btn-ghost {
+  background:#19191b;border:1px solid #3b3731;color:#e6dfd2;box-shadow:none;
+}
+.btn-neutral:hover:not(:disabled),.btn-ghost:hover:not(:disabled) {
+  background:#262321;border-color:#776040;color:#f8ead0;
+}
+.btn:disabled,button:disabled { cursor:not-allowed; }
+.btn:disabled { opacity:.44;box-shadow:none; }
+:is(button,input,select):focus-visible { outline:2px solid var(--ui-focus);outline-offset:3px; }
+
+/* Harmonize the current alarm layout with the other three sections without
+   modifying verified expanded-row geometry or autosave fields. */
+.alarm-list .alarm-live-row {
+  border-radius:var(--ui-radius);border-color:var(--ui-border);
+  background:var(--ui-surface-gradient);
+}
+.alarm-list .alarm-live-row:hover { border-color:var(--ui-border-hover); }
+.alarm-list .alarm-live-row:focus-within { border-color:#786540; }
+.alarm-toolbar .counter-pill {
+  border-color:#51432e;background:#252019;color:var(--ui-gold-light);
+}
+.alarm-live-row .alarm-edit-time { border-radius:var(--ui-radius-small); }
+.alarm-live-row .alarm-edit-label { color:var(--ui-text); }
+
+/* Unified hero cards: identical surfaces, outline and vertical rhythm. */
+#panel-timer .timer-right,#panel-stopwatch .stopwatch-display {
+  min-height:278px;height:auto;margin:0;
+  padding:28px 24px;
+  border-radius:var(--ui-radius);border:1px solid #3d382f;
+  background:
+    radial-gradient(ellipse at 52% 120%,rgba(183,140,70,.08),transparent 67%),
+    var(--ui-surface-gradient);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  gap:17px;
+}
+#panel-timer .timer-display,#panel-stopwatch .stopwatch-digits {
+  color:var(--ui-text)!important;
+  font-size:clamp(60px,6vw,90px);line-height:1.06;
+  letter-spacing:-2px;font-weight:755;font-variant-numeric:tabular-nums;
+  text-align:center;text-shadow:none;
+}
+/* Keep the major time white and only the fractional hundredths golden.
+   v0.4.18 digit spans inherit this color rather than individual hover state. */
+#panel-stopwatch #stopwatchDisplay .at-number-main,
+#panel-stopwatch #stopwatchDisplay .at-number-digit,
+#panel-stopwatch #stopwatchDisplay .at-number-separator,
+#panel-stopwatch #stopwatchDisplay .at-number-text { color:var(--ui-text)!important; }
+#panel-stopwatch #stopwatchDisplay .at-number-fraction {
+  color:var(--ui-gold)!important;font-size:.46em;letter-spacing:-1px;
+}
+.refined-eyebrow { color:var(--ui-gold);letter-spacing:1.65px;font-size:10px; }
+.refined-eyebrow::before { background:var(--ui-gold);box-shadow:0 0 0 3px rgba(216,180,106,.1); }
+#panel-timer .timer-progress {
+  height:5px;width:min(570px,86%);border:0;border-radius:999px;background:#393630;
+}
+#panel-timer .timer-progress>div {
+  background:linear-gradient(90deg,#bf924c,var(--ui-gold-light));
+  box-shadow:none; /* keep the GPU-friendly v0.4.20 scaleX animation */
+}
+#panel-timer .actions,#panel-stopwatch .stopwatch-actions { gap:10px; }
+#panel-timer .actions .btn,#panel-stopwatch .stopwatch-actions .btn { min-width:142px; }
+
+/* Form and preset panels share the same geometry as the settings cards. */
+#panel-timer .timer-left,#panel-settings .settings-v3 .settings-card {
+  background:var(--ui-surface-gradient);border:1px solid var(--ui-border);
+  border-radius:var(--ui-radius);box-shadow:inset 0 1px 0 rgba(255,255,255,.02);
+}
+#panel-timer .timer-left { min-height:132px;padding:20px 24px; }
+.refined-config-head strong,#panel-settings .settings-kicker {
+  font-size:15px;font-weight:720;letter-spacing:-.3px;color:var(--ui-text);
+}
+#panel-timer .timer-inputs input,#panel-timer .extra-duration,
+#panel-settings .melody-trigger {
+  background:var(--ui-surface-input);border:1px solid #443e34;
+  border-radius:var(--ui-radius-small);color:var(--ui-text);
+}
+#panel-timer .timer-inputs input:hover:not(:disabled),
+#panel-timer .extra-duration:hover:not(:disabled),
+#panel-settings .melody-trigger:hover { border-color:#836941; }
+#panel-timer .presets button,#panel-settings .workweek-days button {
+  border-radius:var(--ui-radius-small)!important;
+  background:#222123!important;border:1px solid #3f3b34!important;
+  color:#d0c9bd!important;
+}
+#panel-timer .presets button:hover:not(:disabled),
+#panel-settings .workweek-days button:hover:not(:disabled) {
+  background:#2a251e!important;border-color:#937348!important;color:var(--ui-gold-light)!important;
+}
+#panel-timer .presets button.selected {
+  color:var(--ui-gold-light)!important;background:#2f271a!important;
+  border-color:#947747!important;box-shadow:inset 0 0 0 1px rgba(223,183,109,.07);
+}
+/* Working-day buttons correspond to the filled selection used for the
+   alarm schedule presets, not the time-duration shortcut buttons. */
+#panel-settings .workweek-days button[aria-pressed="true"] {
+  color:#1c160f!important;background:linear-gradient(180deg,#eed08b,#d5aa62)!important;
+  border-color:#dbb269!important;box-shadow:inset 0 1px 0 rgba(255,244,208,.28);
+}
+#panel-settings .workweek-days button[aria-pressed="true"]:hover {
+  color:#1c160f!important;background:linear-gradient(180deg,#f4daa6,#e0b973)!important;
+}
+/* Each running secondary timer uses the same card as an alarm row. */
+#panel-timer .extra-timer-row {
+  background:var(--ui-surface-gradient);border:1px solid var(--ui-border);
+  border-radius:var(--ui-radius);
+}
+#panel-timer .extra-timer-time { color:var(--ui-text); }
+#panel-timer .extra-timer-control { border-radius:var(--ui-radius-small); }
+#panel-timer .extra-timers-head h2 { font-size:18px; }
+
+/* Align settings card rhythm, dividers, switches and secondary text. */
+#panel-settings .settings-v3 { gap:14px; }
+#panel-settings .settings-v3 .settings-card { padding:22px 24px; }
+#panel-settings .settings-heading {
+  margin:0 0 7px;padding-bottom:13px;border-bottom:1px solid #35322c;
+}
+#panel-settings .setting-row.compact { min-height:54px;border-color:#35322c; }
+#panel-settings .setting-description strong,#panel-settings .setting-audio-field label {
+  color:var(--ui-text);font-size:13px;font-weight:650;
+}
+#panel-settings .workweek-help,#panel-settings .shortcuts-always .shortcuts-grid,
+#panel-settings .settings-notice { color:var(--ui-secondary); }
+#panel-settings .setting-inline output,#panel-settings .workweek-summary {
+  color:var(--ui-gold-light);
+}
+/* One switch geometry in settings and alarms, without changing role=switch. */
+#panel-settings .setting-row .toggle,.alarm-edit-actions .toggle {
+  width:44px;height:24px;transform:none;border:1px solid #544c3f;
+  background:linear-gradient(180deg,#343438,#252529);
+  box-shadow:none;
+}
+#panel-settings .setting-row .toggle::after,.alarm-edit-actions .toggle::after {
+  top:2px;left:2px;width:18px;height:18px;background:#a9a39a;
+}
+#panel-settings .setting-row .toggle.on,.alarm-edit-actions .toggle.on {
+  border-color:#d1ae68;background:linear-gradient(180deg,#e2c37f,#cba359);
+}
+#panel-settings .setting-row .toggle.on::after,.alarm-edit-actions .toggle.on::after {
+  left:22px;background:#fffdf6;
+}
+#panel-settings .workweek-days button { min-width:45px; }
+#panel-settings .settings-v3 .workweek-card { padding-bottom:22px!important; }
+#panel-settings .shortcuts-always kbd {
+  border-radius:6px;color:var(--ui-gold-light);border-color:#5c4a30;background:#28231c;
+}
+
+/* Dialogs, confirmation and transient notifications should belong to the
+   same product as the screens behind them. */
+.dialog {
+  background:var(--ui-surface-gradient);border:1px solid #5a4b31;
+  border-radius:var(--ui-radius);box-shadow:0 20px 65px rgba(0,0,0,.58);
+}
+.dialog h2 { color:var(--ui-text); }
+.alert-symbol { background:#2d271e;border-color:#705634;color:var(--ui-gold-light); }
+.toast { background:#24211c;border:1px solid #655035;color:#f1e7d4;border-radius:10px; }
+
+@media(max-width:1050px){
+  .alarm-toolbar h1,.refined-section-head h1 { font-size:32px; }
+  #panel-timer .timer-right,#panel-stopwatch .stopwatch-display { min-height:260px; }
+  #panel-timer .timer-display,#panel-stopwatch .stopwatch-digits { font-size:clamp(50px,6.5vw,78px); }
+}
+@media(max-width:790px){
+  .alarm-toolbar h1,.refined-section-head h1 { font-size:28px; }
+  #panel-timer .timer-left,#panel-settings .settings-v3 .settings-card { padding:20px; }
+  #panel-timer .timer-right,#panel-stopwatch .stopwatch-display { min-height:248px;padding:23px 14px; }
+  #panel-timer .timer-display,#panel-stopwatch .stopwatch-digits { font-size:clamp(44px,7.5vw,66px);letter-spacing:-1px; }
+}
+@media(max-width:520px){
+  .top-navigation .nav-item { font-size:11px;gap:5px;padding:0 6px; }
+  #panel-timer .actions .btn,#panel-stopwatch .stopwatch-actions .btn { min-width:108px; }
+}
+@media(prefers-reduced-motion:reduce){
+  .top-navigation .nav-item,.btn { transition:none!important; }
+}
+.reduced-motion .top-navigation .nav-item,.reduced-motion .btn { transition:none!important; }
+
+/* v0.4.22 — native WebView text-selection polish.
+   Do not change keyboard focus or editing/clipboard behavior in form fields. */
+.app-shell, .app-shell * {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.app-shell :is(input, textarea, [contenteditable="true"]),
+.app-shell :is(input, textarea, [contenteditable="true"]) * {
+  -webkit-user-select: text;
+  user-select: text;
+}
+.app-shell :is(input, textarea, [contenteditable="true"]) {
+  caret-color: #d9b66e;
+}
+.app-shell :is(input, textarea, [contenteditable="true"])::selection,
+.app-shell [contenteditable="true"] *::selection {
+  background: #bd9853;
+  color: #16130e;
+}
