@@ -1,0 +1,51 @@
+/* AngelTime v0.4.23 — native backup/restore UI, same visual system. */
+#panel-settings .settings-v3 .workweek-card {
+  grid-column:1!important;max-width:none!important;justify-self:stretch!important;
+}
+#panel-settings .settings-v3 .backup-card {
+  grid-column:2;min-width:0;max-width:none;
+}
+#panel-settings .backup-help {
+  color:var(--ui-secondary);font-size:13px;line-height:1.55;margin:12px 0 15px;
+}
+#panel-settings .backup-buttons {display:flex;gap:9px;flex-wrap:wrap;}
+#panel-settings .backup-buttons .btn {flex:1;min-width:150px;min-height:40px;}
+#panel-settings .backup-path {
+  font-size:11px;color:var(--ui-gold-light);line-height:1.55;
+  word-break:break-word;user-select:text;-webkit-user-select:text;
+  padding:11px 12px;margin:14px 0 10px;
+  border:1px solid #494032;border-radius:9px;background:#201c18;
+}
+#panel-settings .backup-undo {
+  min-height:37px;align-self:flex-start;padding:0 14px;
+}
+#panel-settings .backup-footnote {
+  margin:12px 0 0;color:var(--ui-muted);font-size:11px;line-height:1.55;
+}
+#panel-settings .workweek-card .workweek-days {gap:6px;}
+#panel-settings .workweek-card .workweek-days button {min-width:38px;}
+.delete-dialog #deleteBody {white-space:pre-line;line-height:1.6;}
+@media(max-width:940px) {
+  #panel-settings .settings-v3 .workweek-card {grid-column:1/-1!important;}
+  #panel-settings .settings-v3 .backup-card {grid-column:1/-1;}
+}
+@media(max-width:790px) {
+  #panel-settings .settings-v3 .workweek-card,
+  #panel-settings .settings-v3 .backup-card {grid-column:1!important;}
+}
+@media(prefers-reduced-motion:reduce) {
+  #panel-settings .backup-buttons .btn {transition:none!important;}
+}
+
+#panel-settings .backup-path::selection { background:#bd9853;color:#16130e; }
+
+/* An additional settings card must never become unreachable at 690px height. */
+#panel-settings.tab-panel {
+  overflow-y:auto;
+  padding-bottom:28px;
+  scrollbar-width:thin;
+  scrollbar-color:#665034 #181716;
+}
+#panel-settings.tab-panel::-webkit-scrollbar {width:8px;}
+#panel-settings.tab-panel::-webkit-scrollbar-track {background:#181716;}
+#panel-settings.tab-panel::-webkit-scrollbar-thumb {background:#665034;border-radius:99px;}

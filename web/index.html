@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="visual-0417.css" />
   <link rel="stylesheet" href="visual-0418.css" />
   <link rel="stylesheet" href="visual-0421.css" />
+  <link rel="stylesheet" href="visual-0423.css" />
+  <link rel="stylesheet" href="visual-0424.css" />
+  <link rel="stylesheet" href="visual-0425.css" />
+  <link rel="stylesheet" href="visual-0426.css" />
+  <link rel="stylesheet" href="visual-0427.css" />
+  <link rel="stylesheet" href="visual-0428.css" />
   <script type="module" src="app.js"></script>
 </head>
 <body>
@@ -100,9 +106,50 @@
             </div>
             <p id="workDaysInfo" class="workweek-summary">Мои выходные: Сб, Вс</p>
           </div>
+          <div class="settings-card backup-card">
+            <div class="settings-heading"><span class="settings-kicker">Резервная копия</span></div>
+            <p class="backup-help">Сохрани будильники и настройки в JSON или восстанови их из файла.</p>
+            <div class="backup-buttons">
+              <button type="button" class="btn btn-primary" id="backupExport">Сохранить копию</button>
+              <button type="button" class="btn btn-neutral" id="backupImport">Восстановить из JSON</button>
+              <input type="file" id="backupFile" accept=".json,application/json" hidden />
+            </div>
+            <p class="backup-path" id="backupStatus" role="status">Файлы сохраняются в папку «Загрузки».</p>
+            <button type="button" class="btn btn-ghost backup-undo" id="backupUndo" disabled>Отменить последний импорт</button>
+            <p class="backup-footnote">Действующие таймеры и секундомер не изменяются. Собственные MP3 в JSON не включаются.</p>
+          </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <div class="overlay hidden alarm-edit-overlay" id="alarmEditOverlay" role="presentation">
+    <form class="alarm-edit-dialog" id="alarmEditForm" role="dialog" aria-modal="true" aria-labelledby="alarmEditTitle" aria-describedby="alarmEditHelp" novalidate>
+      <div class="alarm-dialog-header"><h2 id="alarmEditTitle">Будильник</h2><button type="button" id="alarmEditClose" aria-label="Закрыть окно редактирования">×</button></div>
+      <p id="alarmEditHelp">Изменения сохраняются только после нажатия «Сохранить».</p>
+      <div class="alarm-dialog-fields">
+        <label for="alarmEditTime">Время<input type="text" id="alarmEditTime" placeholder="07:30" inputmode="numeric" maxlength="5" autocomplete="off" required /></label>
+        <label for="alarmEditLabel">Название<input type="text" id="alarmEditLabel" maxlength="60" autocomplete="off" placeholder="Название будильника" /></label>
+      </div>
+      <div class="alarm-dialog-heading">Расписание</div>
+      <div class="alarm-dialog-presets" id="alarmEditPresets" role="group" aria-label="Быстрый выбор расписания">
+        <button type="button" data-edit-preset="once" aria-pressed="false">Разово</button>
+        <button type="button" data-edit-preset="daily" aria-pressed="false">Каждый день</button>
+        <button type="button" data-edit-preset="workdays" aria-pressed="false">Мои будни</button>
+        <button type="button" data-edit-preset="weekends" aria-pressed="false">Мои выходные</button>
+      </div>
+      <div class="alarm-dialog-days" id="alarmEditDays" role="group" aria-label="Дни недели">
+        <button type="button" data-edit-day="0" aria-pressed="false">Пн</button><button type="button" data-edit-day="1" aria-pressed="false">Вт</button><button type="button" data-edit-day="2" aria-pressed="false">Ср</button><button type="button" data-edit-day="3" aria-pressed="false">Чт</button><button type="button" data-edit-day="4" aria-pressed="false">Пт</button><button type="button" data-edit-day="5" aria-pressed="false">Сб</button><button type="button" data-edit-day="6" aria-pressed="false">Вс</button>
+      </div>
+      <div class="alarm-dialog-switch"><span id="alarmEditEnabledLabel">Включён</span><button type="button" id="alarmEditEnabled" class="toggle on" role="switch" aria-checked="true" aria-labelledby="alarmEditEnabledLabel"></button></div>
+      <p class="alarm-dialog-error" id="alarmEditError" role="status"></p>
+      <div class="alarm-dialog-actions">
+        <button type="button" class="btn alarm-dialog-delete hidden" id="alarmEditDelete">Удалить</button>
+        <span class="alarm-dialog-spacer"></span>
+        <button type="button" class="btn btn-neutral" id="alarmEditCancel">Отмена</button>
+        <button type="submit" class="btn btn-primary" id="alarmEditSave">Сохранить</button>
+      </div>
+    </form>
   </div>
 
   <div class="overlay hidden delete-overlay" id="deleteOverlay" role="presentation">

@@ -1,0 +1,52 @@
+/* v0.4.24 — Next alarm emphasis and automatic time-aware sorting. */
+.alarm-edit-head,.alarm-edit-subrow{
+  width:100%;
+  display:flex;
+  align-items:center;
+  min-width:0;
+}
+.alarm-edit-head{gap:10px;}
+.alarm-edit-subrow{gap:8px;flex-wrap:wrap;}
+.alarm-live-row .alarm-edit-head .alarm-edit-label{flex:1;min-width:0;}
+.alarm-live-row .alarm-edit-subrow .schedule-summary{flex:0 0 auto;}
+.alarm-live-row.is-next{
+  border-color:#8a6c35;
+  background:linear-gradient(90deg,#1c1a16,#171614);
+  box-shadow:inset 0 0 0 1px rgba(226,195,127,.12), 0 0 0 1px rgba(226,195,127,.05);
+}
+.alarm-live-row.is-next:hover,
+.alarm-live-row.is-next:focus-within{
+  border-color:#c59c4e;
+  box-shadow:inset 0 0 0 1px rgba(241,209,143,.18), 0 0 0 1px rgba(241,209,143,.06);
+}
+.next-alarm-pill{
+  flex:0 0 auto;
+  height:22px;
+  padding:0 9px;
+  border-radius:999px;
+  border:1px solid #6f5830;
+  background:linear-gradient(180deg,#2a241a,#201c16);
+  color:#efd08d;
+  font-size:11px;
+  font-weight:700;
+  line-height:20px;
+  letter-spacing:.01em;
+  white-space:nowrap;
+}
+.next-alarm-eta{
+  color:#d2bc91;
+  font-size:11px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.alarm-live-row.disabled .next-alarm-pill,
+.alarm-live-row.disabled .next-alarm-eta{display:none;}
+@media(max-width:1050px){
+  .next-alarm-pill{font-size:10.5px;padding:0 8px;}
+}
+@media(max-width:750px){
+  .alarm-edit-head{gap:8px;}
+  .next-alarm-pill{font-size:10px;}
+  .next-alarm-eta{font-size:10px;}
+}
+

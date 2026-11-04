@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {closestAlarm, escapeHtml, formatCountdown, formatDays, formatStopwatch, nextExtraTimerAction, parseTimerClock, shortcutAction, timerValuesToSeconds} from '../web/logic.js';
+import {closestAlarm, escapeHtml, formatCountdown, formatDays, formatStopwatch, nextAlarmOccurrence, nextExtraTimerAction, parseTimerClock, shortcutAction, sortAlarmsByNextTrigger, timerValuesToSeconds} from '../web/logic.js';
 import { alarmScheduleLabel, validAlarmTime, alarmRowsForSpace, alarmRowsForLayout, paginationRequired, visibleRowsForHeight } from '../web/logic.js';
 
 test('timer is rounded up, not prematurely showing zero', () => {
@@ -38,6 +38,48 @@ test('next alarm weekday and next day handling', () => {
   assert.equal(next.when.getDay(), 2);
   assert.equal(next.when.getDate(), 20);
   assert.equal(closestAlarm([{hour:8,minute:30,enabled:false,days:[]}], monday), null);
+});
+
+test('single alarm exposes its next occurrence', () => {
+  const monday = new Date(2026, 9, 19, 21, 5);
+  const morning = {hour:8, minute:30, enabled:true, days:[]};
+  const next = nextAlarmOccurrence(morning, monday);
+  assert.equal(next.getDate(), 20);
+  assert.equal(next.getHours(), 8);
+  assert.equal(next.getMinutes(), 30);
+});
+
+test('alarms are sorted by the nearest next trigger and enabled alarms stay on top', () => {
+  const now = new Date(2026, 9, 19, 21, 0);
+  const alarms = [
+    {id:'late-disabled', hour:21, minute:5, label:'Disabled', enabled:false, days:[]},
+    {id:'tomorrow-morning', hour:8, minute:0, label:'Morning', enabled:true, days:[]},
+    {id:'today-soon', hour:21, minute:2, label:'Soon', enabled:true, days:[]},
+    {id:'today-later', hour:23, minute:0, label:'Later', enabled:true, days:[]},
+  ];
+  const sorted = sortAlarmsByNextTrigger(alarms, now);
+  assert.deepEqual(sorted.map((alarm) => alarm.id), ['today-soon', 'today-later', 'tomorrow-morning', 'late-disabled']);
+});
+
+test('disabled alarms are sorted by clock time, not their next weekday', () => {
+ const now = new Date(2026, 9, 19, 21, 0);
+ const alarms = [
+  {id:'late',hour:23,minute:30,days:[5],enabled:false},
+  {id:'early',hour:3,minute:0,days:[0],enabled:false},
+  {id:'mid',hour:12,minute:30,days:[2],enabled:false},
+ ];
+ assert.deepEqual(sortAlarmsByNextTrigger(alarms,now).map(a=>a.id),['early','mid','late']);
+});
+
+test('next alarm respects weekday schedules and crossing midnight', () => {
+ const monday = new Date(2026, 9, 19, 23, 55);
+ const alarms = [
+  {id:'friday',hour:23,minute:59,enabled:true,days:[4]},
+  {id:'tuesday',hour:0,minute:10,enabled:true,days:[1]},
+  {id:'tuesday-late',hour:1,minute:0,enabled:true,days:[1]}
+ ];
+ assert.equal(closestAlarm(alarms,monday).alarm.id,'tuesday');
+ assert.deepEqual(sortAlarmsByNextTrigger(alarms,monday).map(a=>a.id),['tuesday','tuesday-late','friday']);
 });
 
 test('alarm label is encoded before DOM insertion', () => {

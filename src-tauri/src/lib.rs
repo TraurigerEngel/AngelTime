@@ -7,7 +7,7 @@ use std::{
     sync::{atomic::{AtomicU64, Ordering}, Mutex},
     thread,
     time::{Duration, Instant},
-    io::{BufReader, Cursor},
+    io::{BufReader, Cursor, Write},
 };
 use tauri::{
     menu::{Menu, MenuItem},
@@ -22,6 +22,9 @@ use base64::Engine;
 static DEFAULT_ALARM_MP3: &[u8] = include_bytes!("../resources/default_alarm.mp3");
 const EXTRA_TIMER_LIMIT: usize = 5;
 const AUDIO_FILE_MAX_BYTES: usize = 12 * 1024 * 1024;
+const BACKUP_MAX_BYTES: usize = 256 * 1024;
+const BACKUP_FORMAT: &str = "angeltime-backup";
+const BACKUP_SCHEMA: u32 = 1;
 // Catch up only recently missed alarms on resume, never the whole sleep period.
 const ALARM_CATCH_UP_MS: i64 = 10 * 60 * 1000;
 
@@ -248,7 +251,7 @@ fn snapshot(store: &AppStore, now: i64) -> Snapshot {
     }
 }
 
-fn save(path: &PathBuf, data: &Persisted) -> Result<(), String> {
+fn save<T: Serialize>(path: &PathBuf, data: &T) -> Result<(), String> {
     if let Some(dir) = path.parent() {
         fs::create_dir_all(dir).map_err(|e| e.to_string())?;
     }
@@ -320,6 +323,217 @@ where F: FnOnce(&mut Persisted) -> Result<(), String> {
         save(&store.file, &next)?;
         *data = next;
     }
+    let result = snapshot(&store, now_ms());
+    let _ = app.emit("angel:state", &result);
+    Ok(result)
+}
+
+
+// Portable, deliberately small backup format. Runtime timers and audio files are
+// excluded: restoring settings must not start old deadlines or import audio bytes.
+#[derive(Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct BackupAlarm {
+    hour: u8,
+    minute: u8,
+    label: String,
+    days: Vec<u8>,
+    schedule_mode: ScheduleMode,
+    enabled: bool,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct BackupDocument {
+    format: String,
+    schema_version: u32,
+    created_at: String,
+    alarms: Vec<BackupAlarm>,
+    preferences: Preferences,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ImportUndo {
+    alarms: Vec<Alarm>,
+    preferences: Preferences,
+}
+
+#[derive(Serialize)]
+struct BackupExportInfo { path: String, alarms_count: usize }
+
+#[derive(Serialize)]
+struct BackupPreview {
+    alarms_count: usize,
+    created_at: String,
+    custom_audio_unavailable: bool,
+}
+
+fn undo_file(path: &PathBuf) -> PathBuf {
+    path.with_file_name("state.before-last-import.json")
+}
+
+fn validated_backup(content: &str) -> Result<BackupDocument, String> {
+    if content.len() > BACKUP_MAX_BYTES {
+        return Err("Файл резервной копии больше 256 КБ".into());
+    }
+    let document: BackupDocument = serde_json::from_str(content)
+        .map_err(|_| "Неверный JSON или формат резервной копии AngelTime".to_string())?;
+    if document.format != BACKUP_FORMAT || document.schema_version != BACKUP_SCHEMA {
+        return Err("Неподдерживаемая версия резервной копии AngelTime".into());
+    }
+    if document.alarms.len() > 32 {
+        return Err("В копии больше 32 будильников".into());
+    }
+    if document.created_at.len() > 64 ||
+        chrono::DateTime::parse_from_rfc3339(&document.created_at).is_err() {
+        return Err("Некорректная дата резервной копии".into());
+    }
+    validate_preferences(&document.preferences)?;
+    for alarm in &document.alarms {
+        if alarm.hour > 23 || alarm.minute > 59 ||
+            alarm.label.trim().is_empty() || alarm.label.chars().count() > 60 ||
+            alarm.label.chars().any(|ch| ch.is_control()) ||
+            alarm.days.len() > 7 || alarm.days.iter().any(|day| *day > 6) {
+            return Err("Недопустимые данные одного из будильников".into());
+        }
+    }
+    Ok(document)
+}
+
+fn make_backup(data: &Persisted) -> BackupDocument {
+    BackupDocument {
+        format: BACKUP_FORMAT.into(), schema_version: BACKUP_SCHEMA,
+        created_at: Local::now().to_rfc3339(),
+        alarms: data.alarms.iter().map(|alarm| BackupAlarm {
+            hour: alarm.hour, minute: alarm.minute, label: alarm.label.clone(),
+            days: alarm.days.clone(), schedule_mode: alarm.schedule_mode,
+            enabled: alarm.enabled,
+        }).collect(),
+        preferences: data.preferences.clone(),
+    }
+}
+
+#[tauri::command]
+fn backup_export(app: tauri::AppHandle) -> Result<BackupExportInfo, String> {
+    let store = app.state::<AppStore>();
+    let document = {
+        let data = store.data.lock().unwrap_or_else(|p| p.into_inner());
+        make_backup(&data)
+    };
+    let bytes = serde_json::to_vec_pretty(&document).map_err(|e| e.to_string())?;
+    if bytes.len() > BACKUP_MAX_BYTES { return Err("Резервная копия слишком большая".into()); }
+    let dir = app.path().download_dir().map_err(|e| format!("Не найдена папка «Загрузки»: {e}"))?;
+    fs::create_dir_all(&dir).map_err(|e| format!("Нет доступа к папке «Загрузки»: {e}"))?;
+    let stamp = Local::now().format("%Y-%m-%d_%H-%M-%S").to_string();
+    for index in 0..100 {
+        let suffix = if index == 0 { String::new() } else { format!("_{index}") };
+        let path = dir.join(format!("AngelTime_Backup_{stamp}{suffix}.json"));
+        let file = fs::OpenOptions::new().create_new(true).write(true).open(&path);
+        let mut file = match file {
+            Ok(file) => file,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+            Err(error) => return Err(format!("Не удалось создать копию: {error}")),
+        };
+        if let Err(error) = file.write_all(&bytes).and_then(|_| file.sync_all()) {
+            drop(file);
+            let _ = fs::remove_file(&path);
+            return Err(format!("Не удалось записать копию: {error}"));
+        }
+        return Ok(BackupExportInfo {
+            path: path.to_string_lossy().into_owned(),
+            alarms_count: document.alarms.len(),
+        });
+    }
+    Err("Не удалось подобрать свободное имя для резервной копии".into())
+}
+
+#[tauri::command]
+fn backup_preview(contents: String) -> Result<BackupPreview, String> {
+    let doc = validated_backup(&contents)?;
+    Ok(BackupPreview {
+        alarms_count: doc.alarms.len(),
+        created_at: doc.created_at,
+        custom_audio_unavailable: doc.preferences.alarm_melody == "custom",
+    })
+}
+
+#[tauri::command]
+fn backup_status(app: tauri::AppHandle) -> bool {
+    undo_file(&app.state::<AppStore>().file).is_file()
+}
+
+#[tauri::command]
+fn backup_import(app: tauri::AppHandle, contents: String) -> Result<Snapshot, String> {
+    let document = validated_backup(&contents)?;
+    let store = app.state::<AppStore>();
+    if store.alert.lock().unwrap_or_else(|p| p.into_inner()).is_some() {
+        return Err("Сначала остановите текущий сигнал".into());
+    }
+    {
+        let mut data = store.data.lock().unwrap_or_else(|p| p.into_inner());
+        let undo = ImportUndo { alarms: data.alarms.clone(), preferences: data.preferences.clone() };
+        let mut next = data.clone();
+        let now = Local::now().format("%Y-%m-%d %H:%M").to_string();
+        next.alarms = document.alarms.into_iter().map(|alarm| Alarm {
+            id: new_id(), hour: alarm.hour, minute: alarm.minute,
+            label: alarm.label.trim().to_string(),
+            days: scheduled_days(alarm.schedule_mode, &alarm.days, &document.preferences.work_days),
+            schedule_mode: alarm.schedule_mode, enabled: alarm.enabled,
+            // Do not unexpectedly ring on the same minute the file was imported.
+            last_fired_key: Some(now.clone()),
+        }).collect();
+        next.preferences = document.preferences;
+        // The JSON does not contain audio bytes. Never silently play a local
+        // custom file that might belong to another backup or computer.
+        if next.preferences.alarm_melody == "custom" {
+            next.preferences.alarm_melody = "default".into();
+            next.preferences.custom_melody_name.clear();
+        }
+        // Durable recovery is written BEFORE the state replacement. If state
+        // persistence fails, the original in-memory state is left unchanged.
+        save(&undo_file(&store.file), &undo)?;
+        save(&store.file, &next)?;
+        *data = next;
+    }
+    store.ring_id.fetch_add(1, Ordering::Relaxed);
+    let result = snapshot(&store, now_ms());
+    let _ = app.emit("angel:state", &result);
+    Ok(result)
+}
+
+#[tauri::command]
+fn backup_undo(app: tauri::AppHandle) -> Result<Snapshot, String> {
+    let store = app.state::<AppStore>();
+    if store.alert.lock().unwrap_or_else(|p| p.into_inner()).is_some() {
+        return Err("Сначала остановите текущий сигнал".into());
+    }
+    let path = undo_file(&store.file);
+    let bytes = fs::read(&path).map_err(|_| "Точка отката не найдена".to_string())?;
+    if bytes.len() > BACKUP_MAX_BYTES { return Err("Повреждена точка отката".into()); }
+    let undo: ImportUndo = serde_json::from_slice(&bytes)
+        .map_err(|_| "Не удалось прочитать точку отката".to_string())?;
+    validate_preferences(&undo.preferences)?;
+    if undo.alarms.len() > 32 || undo.alarms.iter().any(|a|
+        a.hour > 23 || a.minute > 59 || a.days.len() > 7 ||
+        a.days.iter().any(|d| *d > 6) || a.label.chars().count() > 60) {
+        return Err("Повреждены сохранённые будильники".into());
+    }
+    {
+        let mut data = store.data.lock().unwrap_or_else(|p| p.into_inner());
+        let mut next = data.clone();
+        next.alarms = undo.alarms;
+        next.preferences = undo.preferences;
+        if next.preferences.alarm_melody == "custom"
+            && !store.file.with_file_name("custom_alarm.mp3").is_file() {
+            next.preferences.alarm_melody = "default".into();
+            next.preferences.custom_melody_name.clear();
+        }
+        save(&store.file, &next)?;
+        *data = next;
+    }
+    let _ = fs::remove_file(path);
+    store.ring_id.fetch_add(1, Ordering::Relaxed);
     let result = snapshot(&store, now_ms());
     let _ = app.emit("angel:state", &result);
     Ok(result)
@@ -854,7 +1068,7 @@ fn tick(app: &tauri::AppHandle, last_check_ms: Option<i64>) -> (Duration, i64) {
         fired = collect_due_events(&mut data, &now, last_check_ms);
         changed = !fired.is_empty();
         if changed {
-            if let Err(err) = save(&store.file, &data) { eprintln!("AngelTime: ошибка сохранения: {err}"); }
+            if let Err(err) = save(&store.file, &*data) { eprintln!("AngelTime: ошибка сохранения: {err}"); }
         }
         // In the tray, render no WebView frames and perform fewer backend ticks.
         // Event deadlines remain absolute, so sleeping doesn't accumulate drift.
@@ -932,7 +1146,8 @@ pub fn run() {
             timer_start, timer_pause, timer_resume, timer_reset,
             extra_timer_add, extra_timer_action,
             stopwatch_toggle, stopwatch_lap, stopwatch_reset,
-            dismiss_alert, snooze_alert, set_preferences, preview_sound, stop_preview_sound, import_alarm_audio
+            dismiss_alert, snooze_alert, set_preferences, preview_sound, stop_preview_sound, import_alarm_audio,
+            backup_export, backup_preview, backup_status, backup_import, backup_undo
         ])
         .run(tauri::generate_context!())
         .expect("Не удалось запустить AngelTime");
@@ -942,6 +1157,47 @@ pub fn run() {
 mod tests {
     use super::*;
     use chrono::TimeZone;
+
+    #[test]
+    fn backup_roundtrip_only_contains_alarms_and_preferences() {
+        let mut data = Persisted::default();
+        data.alarms.push(Alarm {
+            id: "internal-id".into(), hour: 7, minute: 45, label: "Утро".into(),
+            days: vec![0, 2, 4], schedule_mode: ScheduleMode::Custom,
+            enabled: true, last_fired_key: Some("2026-10-31 07:45".into()),
+        });
+        data.timer.running = true;
+        data.stopwatch.elapsed_ms = 99_000;
+        let json = serde_json::to_string(&make_backup(&data)).unwrap();
+        assert!(!json.contains("internal-id"));
+        assert!(!json.contains("last_fired_key"));
+        assert!(!json.contains("stopwatch"));
+        assert!(!json.contains("deadline_ms"));
+        let imported = validated_backup(&json).unwrap();
+        assert_eq!(imported.alarms.len(), 1);
+        assert_eq!(imported.alarms[0].label, "Утро");
+    }
+
+    #[test]
+    fn backup_rejects_wrong_schema_and_bad_alarm() {
+        let data = Persisted::default();
+        let mut doc = make_backup(&data);
+        doc.schema_version = 999;
+        assert!(validated_backup(&serde_json::to_string(&doc).unwrap()).is_err());
+        doc.schema_version = BACKUP_SCHEMA;
+        doc.alarms.push(BackupAlarm { hour: 26, minute: 0, label: "X".into(),
+            days: vec![], schedule_mode: ScheduleMode::Custom, enabled: true });
+        assert!(validated_backup(&serde_json::to_string(&doc).unwrap()).is_err());
+    }
+
+    #[test]
+    fn backup_rejects_invalid_workweek_and_oversized_payload() {
+        let data = Persisted::default();
+        let mut doc = make_backup(&data);
+        doc.preferences.work_days = vec![0,1,2,3,4,5,6];
+        assert!(validated_backup(&serde_json::to_string(&doc).unwrap()).is_err());
+        assert!(validated_backup(&"x".repeat(BACKUP_MAX_BYTES + 1)).is_err());
+    }
 
     #[test]
     fn workday_schedules_follow_user_configuration() {

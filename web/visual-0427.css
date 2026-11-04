@@ -1,0 +1,114 @@
+/* AngelTime v0.4.27 — Readable Adaptive Workspace.
+   Restore a comfortable visual hierarchy and distribute alarm rows vertically.
+   Sorting, modal editing, backup/restore and Rust logic remain untouched. */
+:root{--at-outer:14px;--at-space:9px;--at-tight:7px;--at-inset:16px;}
+.top-navigation{gap:9px!important;margin-top:12px!important;}
+.top-navigation .nav-item{
+  height:49px!important;min-height:49px!important;
+  font-size:15px!important; font-weight:650!important;
+  border-radius:10px!important;
+}
+.main>.tab-panel,#panel-alarm,#panel-timer,#panel-stopwatch,#panel-settings{
+  padding-top:14px!important;
+}
+#panel-alarm .alarm-toolbar{min-height:49px!important;margin-bottom:9px!important;align-items:center;}
+#panel-alarm .alarm-toolbar h1{font-size:32px!important;font-weight:720;letter-spacing:-.7px;}
+#panel-alarm .alarm-toolbar .counter-pill{font-size:12px;padding:5px 9px;vertical-align:3px;}
+#panel-alarm .alarm-toolbar .btn{
+  height:42px!important;min-height:42px!important;
+  padding:0 19px!important;font-size:14px!important;
+  border-radius:9px!important;
+}
+#panel-alarm .alarm-list{
+  row-gap:var(--at-tight)!important;
+  /* JavaScript supplies this value according to visible height and alarm count. */
+  --alarm-base-row-height:68px;
+  grid-auto-rows:var(--alarm-base-row-height)!important;
+}
+#panel-alarm .alarm-list .alarm-compact-row{
+  grid-template-columns:90px minmax(200px,1fr) minmax(205px,.42fr) 166px!important;
+  column-gap:18px!important;
+  min-height:var(--alarm-base-row-height)!important;
+  height:var(--alarm-base-row-height)!important;
+  padding:0 16px!important;
+  border:1px solid #34312e;
+  border-left:3px solid #39342d;
+  border-radius:10px!important;
+  background:#18181a;
+}
+#panel-alarm .alarm-list .alarm-compact-row:hover{background:#201e1b;border-color:#6a5740;}
+#panel-alarm .alarm-list .alarm-compact-row.is-next{
+  border-color:#846a3e;border-left-color:#e2bd75;
+  background:#211f19;
+}
+#panel-alarm .alarm-list .alarm-compact-row.disabled{background:#131316;opacity:.76;}
+#panel-alarm .compact-time{font-size:23px!important;font-weight:730;}
+#panel-alarm .compact-info{display:flex;flex-direction:column;justify-content:center;gap:5px;min-width:0;}
+#panel-alarm .compact-name{display:block;font-size:17px!important;font-weight:660;line-height:1.25;}
+#panel-alarm .compact-schedule{display:block;font-size:13px!important;line-height:1.3;}
+#panel-alarm .compact-next{font-size:14px!important;font-weight:680;}
+#panel-alarm .compact-actions{display:flex;align-items:center;justify-content:flex-end;gap:14px;}
+#panel-alarm .compact-edit{
+  width:98px!important;min-height:36px!important;height:36px!important;
+  padding:0 10px!important;font-size:13px!important;
+  border-radius:8px!important;color:#e1d9c8;
+}
+#panel-alarm .alarm-compact-row .toggle{width:43px;height:24px;}
+#panel-alarm .alarm-compact-row .toggle::after{width:18px;height:18px;}
+#panel-alarm .alarm-compact-row .toggle.on::after{left:21px;}
+#panel-alarm .page-nav .icon-btn{width:32px;height:32px;}
+
+/* Readable editor: the compact modal stays centered and does not enlarge the list. */
+.alarm-edit-dialog{width:min(100%,545px);padding:22px;}
+.alarm-dialog-header h2{font-size:23px;}
+#alarmEditHelp{font-size:13px;}
+.alarm-dialog-fields label{font-size:13px;}
+.alarm-dialog-fields input{height:44px;font-size:15px;}
+.alarm-dialog-heading{font-size:14px;}
+.alarm-dialog-presets button,.alarm-dialog-days button{height:36px;min-height:36px;font-size:13px;}
+.alarm-dialog-switch{font-size:14px;}
+.alarm-dialog-actions .btn{min-height:40px;font-size:13px;}
+
+/* Keep the same readable navigation and heading scale across other tabs. */
+.refined-section-head h1{font-size:31px!important;}
+.refined-section-head p{font-size:13px;}
+#panel-settings .settings-v3 .settings-card{padding:18px!important;}
+
+@media(max-width:1100px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:76px minmax(155px,1fr) minmax(135px,.45fr) 143px!important;
+    column-gap:11px!important;
+    padding:0 12px!important;
+  }
+  #panel-alarm .compact-time{font-size:20px!important;}
+  #panel-alarm .compact-name{font-size:15px!important;}
+  #panel-alarm .compact-schedule{font-size:12px!important;}
+  #panel-alarm .compact-next{font-size:12px!important;}
+  #panel-alarm .compact-actions{gap:9px;}
+  #panel-alarm .compact-edit{width:84px!important;}
+}
+@media(max-width:760px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:70px minmax(100px,1fr) 128px!important;
+    column-gap:8px!important;
+  }
+  #panel-alarm .compact-next{display:none;}
+  #panel-alarm .compact-time{font-size:18px!important;}
+  #panel-alarm .compact-name{font-size:14px!important;}
+  #panel-alarm .compact-edit{width:75px!important;font-size:11px!important;}
+  #panel-alarm .compact-actions{gap:8px;}
+  .top-navigation .nav-item{font-size:12px!important;}
+}
+@media(max-width:510px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:59px minmax(78px,1fr) 104px!important;
+    column-gap:6px!important;padding:0 8px!important;
+  }
+  #panel-alarm .alarm-toolbar h1{font-size:25px!important;}
+  #panel-alarm .alarm-toolbar .btn{font-size:12px!important;padding:0 10px!important;}
+  #panel-alarm .compact-edit{width:62px!important;font-size:10px!important;}
+  #panel-alarm .compact-actions{gap:5px;}
+  #panel-alarm .alarm-compact-row .toggle{width:33px;height:20px;}
+  #panel-alarm .alarm-compact-row .toggle::after{width:14px;height:14px;}
+  #panel-alarm .alarm-compact-row .toggle.on::after{left:15px;}
+}

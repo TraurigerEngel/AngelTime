@@ -21,7 +21,7 @@ function Run($Executable, [string[]]$Arguments) {
 }
 
 try {
-    Write-Host 'AngelTime v0.4.22 | Windows 11 | Tauri' -ForegroundColor Cyan
+    Write-Host 'AngelTime v0.4.28 | Windows 11 | Tauri' -ForegroundColor Cyan
     Test-Command 'node.exe'
     Test-Command 'npm.cmd'
     Test-Command 'cargo.exe'
@@ -50,7 +50,7 @@ try {
         if (-not (Test-Path -LiteralPath $exe)) { throw 'Сборка завершилась, но angeltime.exe не найден.' }
         $dist = Join-Path $project 'dist'
         New-Item -ItemType Directory -Force -Path $dist | Out-Null
-        $portable = Join-Path $dist 'AngelTime_v0.4.22_Portable.exe'
+        $portable = Join-Path $dist 'AngelTime_v0.4.28_Portable.exe'
         Copy-Item -LiteralPath $exe -Destination $portable -Force
         $sha256 = [System.Security.Cryptography.SHA256]::Create()
         try {
@@ -59,7 +59,7 @@ try {
             finally { $stream.Dispose() }
         }
         finally { $sha256.Dispose() }
-        Set-Content -Path (Join-Path $dist 'AngelTime_v0.4.22_Portable.sha256') -Value "$hash  AngelTime_v0.4.22_Portable.exe" -Encoding Ascii
+        Set-Content -Path (Join-Path $dist 'AngelTime_v0.4.28_Portable.sha256') -Value "$hash  AngelTime_v0.4.28_Portable.exe" -Encoding Ascii
         Write-Host "`nPASS: $portable" -ForegroundColor Green
         Write-Host "SHA-256: $hash" -ForegroundColor Green
         if ($Mode -eq 'Installer') {

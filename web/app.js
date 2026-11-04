@@ -1,4 +1,4 @@
-import { alarmRowsForSpace, alarmRowsForLayout, escapeHtml, formatCountdown, formatDays, formatStopwatch, nextExtraTimerAction, paginationRequired, visibleRowsForHeight, parseTimerClock, alarmScheduleLabel, validAlarmTime, pad2, shortcutAction, timerValuesToSeconds } from './logic.js';
+import { alarmRowsForSpace, alarmRowsForLayout, closestAlarm, escapeHtml, formatCountdown, formatDays, formatStopwatch, nextAlarmOccurrence, nextExtraTimerAction, paginationRequired, sortAlarmsByNextTrigger, visibleRowsForHeight, parseTimerClock, alarmScheduleLabel, validAlarmTime, pad2, shortcutAction, timerValuesToSeconds } from './logic.js';
 import {renderSmoothNumber, calmRunningStopwatchMs, shouldPaintStopwatch} from './numeric-motion.js';
 import {progressRatio, remainingAt, syncProgressClock} from './timer-progress.js';
 
@@ -11,8 +11,9 @@ let activeTab = 'alarm';
 let alarmPage = 0;
 let extraPage = 0;
 let renderedExtraStructure = '';
-let alarmDraft = null; // New alarms are created inline and require explicit Save.
-let openScheduleId = null; // Only one inline schedule panel at a time.
+let alarmModalDraft = null; // All alarm edits are explicit and modal; list rows are read-only.
+let alarmModalReturnFocus = null;
+let alarmModalSaving = false;
 const alarmEdits = new Map(); // Existing alarms: automatically saved, always editable.
 const alarmSaveTimers = new Map();
 let workDaysDraft = null;
@@ -33,13 +34,14 @@ let pendingDelete = null;
 let deletingAlarmId = null; // Prevent repeated right-click from initiating duplicate deletion.
 
 // Own confirmation dialog: no browser-origin message and no implicit destructive default.
-function requestDeleteConfirmation(title, message) {
-  if (pendingDelete || !!alarmDraft || !el('alertOverlay').classList.contains('hidden')) {
+function requestDeleteConfirmation(title, message, actionLabel = 'Удалить') {
+  if (pendingDelete || !!alarmModalDraft || !el('alertOverlay').classList.contains('hidden')) {
     return Promise.resolve(false);
   }
   const previousFocus = document.activeElement;
   el('deleteTitle').textContent = title;
   el('deleteBody').textContent = message; // Text, never interpreted as HTML.
+  el('approveDelete').textContent = actionLabel;
   el('deleteOverlay').classList.remove('hidden');
   el('cancelDelete').focus(); // Enter defaults to Cancel.
   return new Promise((resolve) => { pendingDelete = {resolve, previousFocus}; });
@@ -81,9 +83,8 @@ async function command(name, args = {}) {
 }
 
 function changeTab(tab) {
+  if (alarmModalDraft) return;
   setMelodyPickerOpen(false);
-  if (tab !== 'alarm') openScheduleId = null;
-  if (tab !== activeTab && alarmDraft) { alarmDraft = null; renderedAlarms = ''; }
   activeTab = tab;
   document.querySelectorAll('[data-tab]').forEach((button) => {
     const selected = button.dataset.tab === tab;
@@ -155,43 +156,6 @@ function alarmVisualProfile(label = '') {
   return {icon, tone};
 }
 
-function inlineEditorMarkup() {
-  const draft = alarmDraft;
-  if (!draft) return '';
-  const value = `${pad2(draft.hour)}:${pad2(draft.minute)}`;
-  return `<form class="alarm-inline-editor" id="inlineAlarmForm" aria-label="${draft.id ? 'Редактирование будильника' : 'Создание будильника'}">
-    <div class="inline-editor-fields">
-      <label>Время<input id="inlineAlarmTime" type="time" required value="${value}" /></label>
-      <label class="inline-alarm-label">Название<input id="inlineAlarmLabel" type="text" maxlength="60" autocomplete="off" value="${escapeHtml(draft.label)}" placeholder="Название будильника" /></label>
-      <div class="inline-days" role="group" aria-label="Повторять по дням">
-        ${dayPresetsMarkup([...draft.days], draft.schedule_mode ?? 'custom', '', true)}
-      </div>
-    </div>
-    <div class="inline-editor-actions"><button type="button" class="btn btn-neutral" data-inline-cancel>Отмена</button><button type="submit" class="btn btn-primary" data-inline-save>Сохранить</button></div>
-  </form>`;
-}
-
-function beginInlineAlarmEdit(alarm = null) {
-  if (!state || pendingDelete || !el('alertOverlay').classList.contains('hidden')) return;
-  // A second Edit explicitly discards the first unsaved draft, never saves it.
-  const nextHour = (new Date().getHours() + 1) % 24;
-  alarmDraft = {id: alarm?.id ?? null, hour:alarm?.hour ?? nextHour, minute:alarm?.minute ?? 0,
-    label:alarm?.label ?? '', days:new Set(alarm?.days ?? []), schedule_mode:'custom'};
-  if (alarm) {
-    const perPage = currentAlarmPageSize();
-    const index = state.alarms.findIndex((a) => a.id === alarm.id);
-    alarmPage = Math.floor(Math.max(0,index) / perPage);
-  } else alarmPage = 0;
-  renderAlarms();
-  requestAnimationFrame(() => el('inlineAlarmTime')?.focus());
-}
-
-function closeInlineAlarmEdit() {
-  if (!alarmDraft) return;
-  alarmDraft = null;
-  renderAlarms();
-}
-
 // Changes to existing alarms are saved automatically. Debounced writes prevent
 // one disk write per keystroke; latest edit always wins over in-flight saves.
 function stagedAlarm(id) {
@@ -221,7 +185,7 @@ async function flushAlarmChange(id) {
     const snapshot = await api('upsert_alarm', {alarm:{id:value.id, hour:value.hour, minute:value.minute,
       label:value.label, days:value.days, schedule_mode:value.schedule_mode ?? 'custom', enabled:value.enabled}});
     const latest = alarmEdits.get(id);
-    if (latest === staged && latest.version === version) alarmEdits.delete(id);
+    if (latest === staged && latest.version === version) { alarmEdits.delete(id); alarmSaveTimers.delete(id); }
     else if (latest) {latest.saving = false; clearTimeout(alarmSaveTimers.get(id)); alarmSaveTimers.set(id, setTimeout(() => void flushAlarmChange(id), 40));}
     if (snapshot) update(snapshot);
     // Do not display an intrusive toast on every successful auto-save.
@@ -244,16 +208,117 @@ function modeDays(mode, baseDays) {
   if (mode === 'once') return [];
   return [...baseDays];
 }
-function dayPresetsMarkup(days, mode, id, isNew = false) {
-
-  const daily = mode === 'custom' && days.length === 7;
-  const once = mode === 'custom' && days.length === 0;
-  return `<span class="alarm-day-pills" aria-label="Дни недели">${inlineWeekdays.map((day,i) =>
-    `<button type="button" ${isNew ? `data-inline-day="${i}"` : `data-alarm-day="${i}" data-id="${escapeHtml(id)}"`} aria-pressed="${days.includes(i)}" title="${day}">${day}</button>`).join('')}</span>
-    <span class="alarm-preset-pills" aria-label="Быстрый выбор дней">
-      ${[['once','Разово',once],['daily','Каждый день',daily],['workdays','Мои будни',mode==='workdays'],['weekends','Мои выходные',mode==='weekends']].map(([preset,text,active]) => `<button type="button" ${isNew ? `data-draft-preset="${preset}"` : `data-alarm-preset="${preset}" data-id="${escapeHtml(id)}"`} aria-pressed="${active}">${text}</button>`).join('')}
-    </span>`;
+function displayAlarms(now = new Date()) {
+  if (!state?.alarms) return [];
+  const alarms = state.alarms.map((alarm) => stagedAlarm(alarm.id) ?? alarm);
+  return sortAlarmsByNextTrigger(alarms, now);
 }
+
+function formatAlarmEta(when, now = new Date()) {
+  const minutes = Math.max(1, Math.ceil((when.getTime() - now.getTime()) / 60000));
+  const days = Math.floor(minutes / 1440);
+  const hours = Math.floor((minutes % 1440) / 60);
+  const mins = minutes % 60;
+  const parts = [];
+  if (days > 0) parts.push(`${days} д`);
+  if (hours > 0) parts.push(`${hours} ч`);
+  if (mins > 0 || parts.length === 0) parts.push(`${mins} мин`);
+  return `через ${parts.join(' ')}`;
+}
+
+// Modal values never touch the saved alarm until the user clicks Save.
+function openAlarmEditor(alarm = null) {
+  if (!state || busy || pendingDelete || alarmModalDraft || !el('alertOverlay').classList.contains('hidden')) return;
+  if (alarm && alarmEdits.has(alarm.id)) {
+    toast('Дождись сохранения изменения будильника.');
+    return;
+  }
+  const time = new Date();
+  alarmModalDraft = {
+    id: alarm?.id ?? null,
+    hour: alarm?.hour ?? ((time.getHours() + 1) % 24),
+    minute: alarm?.minute ?? 0,
+    label: alarm?.label ?? '',
+    enabled: alarm?.enabled ?? true,
+    days: new Set(alarm?.days ?? []),
+    schedule_mode: alarm?.schedule_mode ?? 'custom',
+  };
+  alarmModalReturnFocus = document.activeElement;
+  el('alarmEditTitle').textContent = alarm ? 'Изменить будильник' : 'Новый будильник';
+  el('alarmEditTime').value = `${pad2(alarmModalDraft.hour)}:${pad2(alarmModalDraft.minute)}`;
+  el('alarmEditLabel').value = alarmModalDraft.label;
+  el('alarmEditDelete').classList.toggle('hidden', !alarm);
+  el('alarmEditError').textContent = '';
+  el('alarmEditSave').disabled = false;
+  renderAlarmModalChoices();
+  el('alarmEditOverlay').classList.remove('hidden');
+  el('alarmEditTime').focus();
+}
+
+function closeAlarmEditor(force = false) {
+  if (!alarmModalDraft || (alarmModalSaving && !force)) return;
+  alarmModalDraft = null;
+  el('alarmEditOverlay').classList.add('hidden');
+  el('alarmEditError').textContent = '';
+  const previousFocus = alarmModalReturnFocus;
+  alarmModalReturnFocus = null;
+  if (previousFocus?.isConnected && !previousFocus.disabled) previousFocus.focus({preventScroll:true});
+  else el('addAlarm').focus({preventScroll:true});
+}
+
+function renderAlarmModalChoices() {
+  if (!alarmModalDraft) return;
+  const draft = alarmModalDraft;
+  const days = [...draft.days];
+  for (const button of el('alarmEditDays').querySelectorAll('[data-edit-day]')) {
+    button.setAttribute('aria-pressed', String(draft.days.has(Number(button.dataset.editDay))));
+  }
+  for (const button of el('alarmEditPresets').querySelectorAll('[data-edit-preset]')) {
+    const value = button.dataset.editPreset;
+    const selected = value === 'once' ? draft.schedule_mode === 'custom' && days.length === 0 :
+      value === 'daily' ? draft.schedule_mode === 'custom' && days.length === 7 :
+      draft.schedule_mode === value;
+    button.setAttribute('aria-pressed', String(selected));
+  }
+  el('alarmEditEnabled').classList.toggle('on', draft.enabled);
+  el('alarmEditEnabled').setAttribute('aria-checked', String(draft.enabled));
+  el('alarmEditEnabledLabel').textContent = draft.enabled ? 'Включён' : 'Выключен';
+}
+
+async function saveAlarmEditor(event) {
+  event.preventDefault();
+  if (!alarmModalDraft || busy || alarmModalSaving) return;
+  const timeText = el('alarmEditTime').value.trim();
+  if (!validAlarmTime(timeText)) {
+    el('alarmEditError').textContent = 'Введи время в формате 07:30 (от 00:00 до 23:59).';
+    el('alarmEditTime').focus();
+    return;
+  }
+  const [hour,minute] = timeText.split(':').map(Number);
+  const draft = alarmModalDraft;
+  const payload = {
+    id:draft.id, hour, minute,
+    label:el('alarmEditLabel').value.trim().slice(0,60),
+    days:[...draft.days].sort((a,b)=>a-b),
+    schedule_mode:draft.schedule_mode, enabled:draft.enabled,
+  };
+  alarmModalSaving = true;
+  el('alarmEditSave').disabled = true;
+  try {
+    const saved = await command('upsert_alarm', {alarm:payload});
+    if (saved) {
+      closeAlarmEditor(true);
+      renderedAlarms = '';
+      renderAlarms();
+    } else if (alarmModalDraft === draft) {
+      el('alarmEditError').textContent = 'Не удалось сохранить. Проверь данные и повтори попытку.';
+    }
+  } finally {
+    alarmModalSaving = false;
+    el('alarmEditSave').disabled = false;
+  }
+}
+
 // Right-click is a request to delete, never a destructive action on its own.
 // Existing confirmation remains mandatory, including for disabled alarms.
 async function requestAlarmRemoval(id) {
@@ -262,7 +327,6 @@ async function requestAlarmRemoval(id) {
   if (!alarm) return;
   deletingAlarmId = id;
   try {
-    if (alarmDraft) closeInlineAlarmEdit();
     clearTimeout(alarmSaveTimers.get(id));
     if (alarmEdits.get(id)?.saving) {
       toast('Будильник сохраняется. Повтори удаление после сохранения.');
@@ -275,7 +339,6 @@ async function requestAlarmRemoval(id) {
     }
     const approved = await requestDeleteConfirmation('Удалить будильник?', `«${alarm.label}» будет удалён.`);
     if (approved && state?.alarms.some((item) => item.id === id)) {
-      if (openScheduleId === id) openScheduleId = null;
       alarmEdits.delete(id);
       await command('delete_alarm', {id});
     }
@@ -284,82 +347,103 @@ async function requestAlarmRemoval(id) {
   }
 }
 
-function alarmLiveMarkup(alarm) {
-  const mode = alarm.schedule_mode ?? 'custom';
-  const days = [...(alarm.days ?? [])];
-  const expanded = openScheduleId === alarm.id;
+function alarmLiveMarkup(alarm, options = {}) {
+  const {isNext = false, nextWhen = null} = options;
   const id = escapeHtml(alarm.id);
-  const summary = alarmScheduleLabel(days, mode);
-  const profile = alarmVisualProfile(alarm.label);
-  return `<div class="alarm-live-row ${alarm.enabled ? '' : 'disabled'} ${expanded ? 'schedule-open' : ''}" data-id="${id}">
-    <input type="text" inputmode="numeric" pattern="[0-2][0-9]:[0-5][0-9]" maxlength="5" class="alarm-edit-time mono" aria-label="Время будильника в формате чч:мм" title="Нажми для изменения времени" data-alarm-field="time" data-id="${id}" value="${pad2(alarm.hour)}:${pad2(alarm.minute)}" />
-    <div class="alarm-edit-center">
-      <span class="alarm-kind-badge alarm-kind-${profile.tone}" aria-hidden="true">${profile.icon}</span>
-      <div class="alarm-edit-copy">
-        <input type="text" class="alarm-edit-label" maxlength="60" autocomplete="off" spellcheck="false" aria-label="Название будильника" data-alarm-field="label" data-id="${id}" value="${escapeHtml(alarm.label)}" />
-        <button type="button" class="schedule-summary" data-schedule-toggle data-id="${id}" aria-controls="schedule-${id}" aria-expanded="${expanded}" title="Настроить дни повторения">${escapeHtml(summary)}<span class="schedule-chevron" aria-hidden="true"></span></button>
+  const summary = escapeHtml(alarmScheduleLabel(alarm.days ?? [], alarm.schedule_mode ?? 'custom'));
+  const title = escapeHtml(alarm.label);
+  const eta = isNext && nextWhen ? escapeHtml(formatAlarmEta(nextWhen)) : '';
+  return `<div class="alarm-live-row alarm-compact-row ${alarm.enabled ? '' : 'disabled'} ${isNext ? 'is-next' : ''}" data-id="${id}">
+    <span class="compact-time mono">${pad2(alarm.hour)}:${pad2(alarm.minute)}</span>
+    <div class="compact-info">
+      <span class="compact-name" title="${title}">${title}</span>
+      <div class="compact-meta">
+        <span class="compact-schedule" title="${summary}">${summary}</span>
+        ${isNext ? `<span class="compact-next" title="Следующий: ${eta}">Следующий · ${eta}</span>` : ''}
       </div>
     </div>
-    <div class="alarm-edit-actions"><button type="button" role="switch" aria-checked="${alarm.enabled}" class="toggle ${alarm.enabled ? 'on' : ''}" data-action="toggle" data-id="${id}" aria-label="Включить или выключить будильник"></button></div>
-    ${expanded ? `<div class="schedule-editor" id="schedule-${id}" role="group" aria-label="Расписание будильника">
-      ${dayPresetsMarkup(days,mode,alarm.id)}
-    </div>` : ''}
+    <div class="compact-actions">
+      <button type="button" role="switch" aria-checked="${alarm.enabled}" class="toggle ${alarm.enabled ? 'on' : ''}" data-action="toggle" data-id="${id}" aria-label="${alarm.enabled ? 'Выключить' : 'Включить'} будильник «${title}»"></button>
+      <button type="button" class="compact-edit" data-edit-alarm="${id}" title="Изменить будильник" aria-label="Изменить будильник «${title}»">Изменить</button>
+    </div>
   </div>`;
 }
+
+// Keep next-alarm indicator current without disrupting any text editing.
+let alarmVisualFingerprint = '';
+function refreshAlarmClock() {
+  if (!state || activeTab !== 'alarm' || document.hidden || alarmModalDraft || alarmEdits.size) return;
+  const active = document.activeElement;
+  if (active?.closest?.('#deleteOverlay')) return;
+  const now = new Date();
+  const alarms = displayAlarms(now);
+  const next = closestAlarm(alarms, now);
+  const clockKey = [alarms.map((alarm) => alarm.id).join('|'),next?.alarm?.id ?? '',
+    next?.when ? Math.ceil((next.when.getTime()-now.getTime())/60000) : 0].join('~');
+  if (clockKey !== alarmVisualFingerprint) renderAlarms();
+}
+
 function renderAlarms() {
   if (!state) return;
-  const alarms = state.alarms;
-  if (openScheduleId && !alarms.some((alarm)=>alarm.id===openScheduleId)) openScheduleId = null;
+  const now = new Date();
+  const alarms = displayAlarms(now);
+  const nearest = closestAlarm(alarms, now);
+  alarmVisualFingerprint = [alarms.map((alarm) => alarm.id).join('|'), nearest?.alarm?.id ?? '',
+    nearest?.when ? Math.ceil((nearest.when.getTime() - now.getTime()) / 60000) : 0].join('~');
   const list = el('alarmList');
-  const rawSize = currentAlarmPageSize();
-  // currentAlarmPageSize includes only the extra pixels actually occupied by
-  // an expanded row or an inline draft. Never waste two complete alarm rows.
-  const pageSize = rawSize;
+  const pageSize = currentAlarmPageSize();
   const pages = Math.max(1, Math.ceil(alarms.length / pageSize));
   alarmPage = Math.max(0, Math.min(alarmPage, pages - 1));
   renderSmoothNumber(el('alarmsTotal'), String(alarms.length));
   el('alarmsTotal').classList.toggle('hidden', alarms.length === 0);
-  list.classList.toggle('is-empty', alarms.length === 0 && !alarmDraft);
-  list.classList.toggle('has-inline-edit', !!alarmDraft);
-  list.classList.toggle('has-open-schedule', !!openScheduleId);
+  list.classList.toggle('is-empty', alarms.length === 0);
   el('alarmPage').closest('.page-nav').classList.toggle('hidden', !paginationRequired(alarms.length, pageSize));
   renderSmoothNumber(el('alarmPage'), `${alarmPage + 1} / ${pages}`);
   el('alarmPrev').disabled = alarmPage === 0;
   el('alarmNext').disabled = alarmPage >= pages - 1;
-  const page = alarms.slice(alarmPage * pageSize, alarmPage * pageSize + pageSize);
-  const rows = page.map((alarm) => alarmDraft?.id === alarm.id ? inlineEditorMarkup() : alarmLiveMarkup(stagedAlarm(alarm.id) ?? alarm));
-  if (alarmDraft && !alarmDraft.id) rows.unshift(inlineEditorMarkup());
-  const focused = document.activeElement?.closest?.('.alarm-live-row');
-  const input = focused && document.activeElement?.matches?.('input[data-alarm-field]') ? document.activeElement : null;
-  const focusId = focused?.dataset.id;
-  const focusField = input?.dataset.alarmField;
-  const sel = focusField === 'label' ? [input.selectionStart,input.selectionEnd] : null;
-  list.innerHTML = rows.length ? rows.join('') : `<div class="empty">Будильников нет</div>`;
-  if (focusId && focusField) {
-    const restored = list.querySelector(`[data-id="${CSS.escape(focusId)}"][data-alarm-field="${focusField}"]`);
-    if (restored) { restored.focus({preventScroll:true}); if (sel) restored.setSelectionRange(...sel); }
+
+  // Keep focus on the same action if a native update changes sorting.
+  const active = document.activeElement;
+  const rowId = active?.closest?.('.alarm-compact-row')?.dataset.id;
+  const action = active?.matches?.('[data-action="toggle"]') ? 'toggle' :
+    active?.matches?.('[data-edit-alarm]') ? 'edit' : null;
+  const first = alarmPage * pageSize;
+  const page = alarms.slice(first, first + pageSize);
+  // CSS Grid fills down the left column, then down the right column.
+  // Balance only the current page; never change the sorted order in storage.
+  const columns = list.classList.contains('two-columns') && page.length > 1 ? 2 : 1;
+  list.style.setProperty('--at-column-rows', String(Math.max(1, Math.ceil(page.length / columns))));
+  list.innerHTML = page.length ? page.map((alarm) => {
+    const isNext = nearest?.alarm?.id === alarm.id;
+    return alarmLiveMarkup(alarm, {isNext, nextWhen:isNext ? nearest.when : null});
+  }).join('') : '<div class="empty">Будильников нет</div>';
+  if (rowId && action) {
+    const selector = action === 'toggle' ? `[data-action="toggle"][data-id="${CSS.escape(rowId)}"]` :
+      `[data-edit-alarm="${CSS.escape(rowId)}"]`;
+    list.querySelector(selector)?.focus({preventScroll:true});
   }
 }
 
 function currentAlarmPageSize() {
   const list = el('alarmList');
-  const panel = el('panel-alarm');
-  // Hidden tabs have no usable geometry. Recalculate when the alarm tab opens.
-  const active = panel.classList.contains('active');
-  // The schedule state changes before renderAlarms() updates the CSS class.
-  // Synchronize it before measuring, including the very first click.
-  list.classList.toggle('has-open-schedule', !!openScheduleId);
+  const active = el('panel-alarm').classList.contains('active');
   const styles = window.getComputedStyle(list);
-  const rowHeight = Number.parseFloat(styles.getPropertyValue('--alarm-base-row-height')) || 70;
-  const gap = Number.parseFloat(styles.rowGap) || 6;
-  const expandedHeight = openScheduleId ?
-    (Number.parseFloat(styles.getPropertyValue('--alarm-expanded-row-height')) || 138) : 0;
-  const editorHeight = alarmDraft ?
-    (Number.parseFloat(styles.getPropertyValue('--alarm-inline-editor-height')) || 170) : 0;
-  const editorMode = alarmDraft ? (alarmDraft.id ? 'replace' : 'new') : 'none';
+  // Two genuinely shorter cards per row at desktop widths. Do not change
+  // card height, font sizes or its two-line name/schedule layout.
+  // One column remains available at narrow widths.
+  const twoColumn = active && list.getBoundingClientRect().width >= 1200;
+  list.classList.toggle('two-columns', twoColumn);
+  const gap = Number.parseFloat(styles.rowGap) || 7;
   const available = active ? window.innerHeight - list.getBoundingClientRect().top - 12 :
-    window.innerHeight - 185;
-  return alarmRowsForLayout(available, rowHeight, gap, expandedHeight, editorHeight, editorMode);
+    window.innerHeight - 145;
+  // The 10-row reference is identical to the former v0.4.27 layout: 20
+  // alarms now fit in two columns without squeezing their vertical size.
+  const intended = twoColumn ? 10 : Math.max(1, Math.min(20, state?.alarms?.length ?? 1));
+  const idealHeight = Math.floor((Math.max(0, available) - Math.max(0, intended - 1) * gap) / intended);
+  const rowHeight = Math.max(56, Math.min(82, idealHeight));
+  list.style.setProperty('--alarm-base-row-height', `${rowHeight}px`);
+  if (!twoColumn) return Math.min(20, alarmRowsForSpace(available, rowHeight, gap));
+  return Math.min(20, Math.min(10, alarmRowsForSpace(available, rowHeight, gap)) * 2);
 }
 
 function updateRangeAppearance(input) {
@@ -622,6 +706,7 @@ function renderStopwatch() {
 
 function renderAlert() {
   const alert = state?.alert;
+  if (alert && alarmModalDraft) closeAlarmEditor(true);
   el('alertOverlay').classList.toggle('hidden', !alert);
   if (!alert) return;
   el('alertTitle').textContent = alert.title;
@@ -632,6 +717,95 @@ function renderAlert() {
 
 function isEditingTarget(target) {
   return !!target?.closest?.('input, textarea, select, [contenteditable="true"]');
+}
+
+// All backup JSON is parsed and validated again in Rust. The UI preview is
+// informational and never authorizes an unchecked state replacement.
+function backupCanProceed() {
+  if (!api || busy) { toast('Операция сейчас недоступна.'); return false; }
+  if (alarmModalDraft || alarmEdits.size || alarmSaveTimers.size || workDaysDraft || workDaysSaving || pendingDelete) {
+    toast('Сначала заверши редактирование и дождись сохранения настроек.');
+    return false;
+  }
+  if (state?.alert) { toast('Сначала останови текущий сигнал.'); return false; }
+  return true;
+}
+
+async function refreshBackupUndo() {
+  if (!api) return;
+  try { el('backupUndo').disabled = !(await api('backup_status')); }
+  catch { el('backupUndo').disabled = true; }
+}
+
+async function exportBackup() {
+  if (!backupCanProceed()) return;
+  busy = true;
+  el('backupExport').disabled = true;
+  try {
+    const result = await api('backup_export');
+    el('backupStatus').textContent = `Сохранено: ${result.path}`;
+    toast(`Создана резервная копия (${result.alarms_count} будильников).`);
+  } catch (error) { toast(`Не удалось сохранить копию: ${String(error)}`); }
+  finally { busy = false; el('backupExport').disabled = false; }
+}
+
+async function importBackupFile(file) {
+  if (!file || !backupCanProceed()) return;
+  if (!file.name.toLowerCase().endsWith('.json') || file.size === 0 || file.size > 256 * 1024) {
+    toast('Выбери JSON-файл резервной копии AngelTime размером до 256 КБ.');
+    return;
+  }
+  let contents, info;
+  busy = true;
+  try {
+    contents = await file.text();
+    info = await api('backup_preview', {contents});
+  } catch (error) {
+    toast(`Не удалось прочитать резервную копию: ${String(error)}`);
+    return;
+  } finally { busy = false; }
+  const message = `Будильников в копии: ${info.alarms_count}.\nДата: ${info.created_at}.\n\nТекущие будильники и настройки будут заменены. Таймеры и секундомер останутся без изменений.` +
+    (info.custom_audio_unavailable ? '\n\nСобственный MP3 не входит в JSON. При восстановлении будет выбрана стандартная мелодия.' : '');
+  if (!(await requestDeleteConfirmation('Восстановить из JSON?', message, 'Восстановить'))) return;
+  if (!backupCanProceed()) return;
+  busy = true;
+  el('backupImport').disabled = true;
+  try {
+    const result = await api('backup_import', {contents});
+    clearTimeout(workDaysSaveTimer);
+    workDaysDraft = null;
+    alarmEdits.clear();
+    for (const timer of alarmSaveTimers.values()) clearTimeout(timer);
+    alarmSaveTimers.clear();
+    renderedAlarms = '';
+    update(result);
+    await refreshBackupUndo();
+    el('backupStatus').textContent = `Восстановлено ${info.alarms_count} будильников из «${file.name}».`;
+    toast('Резервная копия восстановлена. Доступна отмена импорта.');
+  } catch (error) { toast(`Импорт не выполнен: ${String(error)}`); }
+  finally { busy = false; el('backupImport').disabled = false; }
+}
+
+async function undoBackupImport() {
+  if (!backupCanProceed() || el('backupUndo').disabled) return;
+  const approved = await requestDeleteConfirmation('Отменить последний импорт?',
+    'Будут возвращены будильники и настройки, сохранённые до последнего импорта. Изменения, сделанные после импорта, будут потеряны. Таймеры и секундомер не затронуты.', 'Вернуть');
+  if (!approved || !backupCanProceed()) return;
+  busy = true;
+  el('backupUndo').disabled = true;
+  try {
+    const restored = await api('backup_undo');
+    clearTimeout(workDaysSaveTimer);
+    workDaysDraft = null;
+    alarmEdits.clear();
+    for (const timer of alarmSaveTimers.values()) clearTimeout(timer);
+    alarmSaveTimers.clear();
+    renderedAlarms = '';
+    update(restored);
+    el('backupStatus').textContent = 'Импорт отменён. Возвращены предыдущие будильники и настройки.';
+    toast('Предыдущие настройки восстановлены.');
+  } catch (error) { toast(`Не удалось отменить импорт: ${String(error)}`); }
+  finally { busy = false; await refreshBackupUndo(); }
 }
 
 async function setPreference(key, value) {
@@ -698,7 +872,7 @@ function bindEvents() {
     buttons[target].focus();
     changeTab(buttons[target].dataset.tab);
   });
-  el('addAlarm').addEventListener('click', () => beginInlineAlarmEdit());
+  el('addAlarm').addEventListener('click', () => openAlarmEditor());
   window.addEventListener('keydown', (event) => {
     if (pendingDelete) {
       if (event.key === 'Escape') {
@@ -717,6 +891,21 @@ function bindEvents() {
       }
       return;
     }
+    if (alarmModalDraft) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeAlarmEditor();
+      } else if (event.key === 'Tab') {
+        const items = [...el('alarmEditOverlay').querySelectorAll('button:not([disabled]):not(.hidden), input:not([disabled])')]
+          .filter((item) => item.getClientRects().length > 0);
+        const index = items.indexOf(document.activeElement);
+        if (items.length && (index < 0 || (event.shiftKey && index === 0) || (!event.shiftKey && index === items.length - 1))) {
+          event.preventDefault();
+          items[event.shiftKey ? items.length - 1 : 0].focus();
+        }
+      }
+      return;
+    }
     if ((event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey)) && activeTab === 'alarm') {
       const row = event.target.closest?.('#alarmList .alarm-live-row');
       if (row?.dataset?.id) {
@@ -725,13 +914,7 @@ function bindEvents() {
         return;
       }
     }
-    if (event.key === 'Escape' && alarmDraft) {
-      event.preventDefault(); closeInlineAlarmEdit(); return;
-    }
-    if (event.key === 'Escape' && openScheduleId) {
-      event.preventDefault(); openScheduleId = null; renderAlarms(); return;
-    }
-    const modalOpen = !!alarmDraft || !el('alertOverlay').classList.contains('hidden') || !el('deleteOverlay').classList.contains('hidden');
+    const modalOpen = !!alarmModalDraft || !el('alertOverlay').classList.contains('hidden') || !el('deleteOverlay').classList.contains('hidden');
     if (appWindow && !modalOpen && !event.ctrlKey && !event.altKey && !event.metaKey) {
       if (event.key === 'F11') {
         event.preventDefault();
@@ -749,126 +932,61 @@ function bindEvents() {
     if (!action) return;
     event.preventDefault();
     if (action.startsWith('tab:')) changeTab(['alarm','timer','stopwatch','settings'][Number(action.split(':')[1])]);
-    if (action === 'new-alarm') beginInlineAlarmEdit();
+    if (action === 'new-alarm') openAlarmEditor();
     if (action === 'toggle') el(activeTab === 'timer' ? 'timerToggle' : 'stopwatchToggle').click();
   });
-  el('alarmList').addEventListener('input', (event) => {
-    if (!alarmDraft) return;
-    if (event.target.id === 'inlineAlarmLabel') alarmDraft.label = event.target.value;
-    if (event.target.id === 'inlineAlarmTime') {
-      const value = event.target.value;
-      if (/^\d{2}:\d{2}$/.test(value)) [alarmDraft.hour,alarmDraft.minute] = value.split(':').map(Number);
-    }
-  });
-  el('alarmList').addEventListener('input', (event) => {
-    const field = event.target.dataset?.alarmField;
-    const id = event.target.dataset?.id;
-    if (field === 'label' && id) scheduleAlarmChange(id, {label:event.target.value}, false);
-  });
-  el('alarmList').addEventListener('change', (event) => {
-    const field = event.target.dataset?.alarmField;
-    const id = event.target.dataset?.id;
-    if (field === 'time' && id) {
-      const value = event.target.value.trim();
-      if (!validAlarmTime(value)) {
-        const current = stagedAlarm(id);
-        if (current) event.target.value = `${pad2(current.hour)}:${pad2(current.minute)}`;
-        toast('Время должно быть в формате 07:30 (00:00–23:59).');
-        return;
-      }
-      const [hour,minute] = value.split(':').map(Number);
-      scheduleAlarmChange(id,{hour,minute},true);
-    }
-  });
-  el('alarmList').addEventListener('focusout', (event) => {
-    if (event.target.dataset?.alarmField === 'label') {
-      const id=event.target.dataset.id;
-      clearTimeout(alarmSaveTimers.get(id));
-      alarmSaveTimers.set(id, setTimeout(()=>void flushAlarmChange(id), 25));
-    }
-  });
-  el('alarmList').addEventListener('submit', async (event) => {
-    if (event.target.id !== 'inlineAlarmForm') return;
-    event.preventDefault();
-    if (!alarmDraft || busy) return;
-    const value = el('inlineAlarmTime').value;
-    if (!/^\d{2}:\d{2}$/.test(value)) { toast('Выбери время будильника.'); return; }
-    const [hour,minute] = value.split(':').map(Number);
-    if (hour > 23 || minute > 59) { toast('Некорректное время.'); return; }
-    const savedId = alarmDraft.id;
-    const existing = state.alarms.find((a) => a.id === savedId);
-    const payload = {id:savedId,hour,minute,label:el('inlineAlarmLabel').value,
-      days:[...alarmDraft.days].sort((a,b)=>a-b),schedule_mode:alarmDraft.schedule_mode ?? 'custom',enabled:existing?.enabled ?? true};
-    const saveButton = event.target.querySelector('[data-inline-save]');
-    saveButton.disabled = true;
-    const result = await command('upsert_alarm',{alarm:payload});
-    if (result) { alarmDraft = null; renderedAlarms = ''; renderAlarms(); }
-    else if (saveButton.isConnected) saveButton.disabled = false;
-  });
-  el('alarmList').addEventListener('click', async (event) => {
-    const cancel = event.target.closest('[data-inline-cancel]');
-    if (cancel) { closeInlineAlarmEdit(); return; }
-    const dayButton = event.target.closest('[data-inline-day]');
-    if (dayButton && alarmDraft) {
-      const day = Number(dayButton.dataset.inlineDay);
-      if (alarmDraft.days.has(day)) alarmDraft.days.delete(day);
-      else alarmDraft.days.add(day);
-      alarmDraft.schedule_mode = 'custom';
-      renderAlarms();
+  el('alarmList').addEventListener('click', (event) => {
+    if (!state || busy || alarmModalDraft) return;
+    const editButton = event.target.closest('[data-edit-alarm]');
+    if (editButton) {
+      const alarm = state.alarms.find((entry) => entry.id === editButton.dataset.editAlarm);
+      if (alarm) openAlarmEditor(alarm);
       return;
     }
-    const draftPreset = event.target.closest('[data-draft-preset]');
-    if (draftPreset && alarmDraft) {
-      alarmDraft.schedule_mode = ['workdays','weekends'].includes(draftPreset.dataset.draftPreset) ? draftPreset.dataset.draftPreset : 'custom';
-      alarmDraft.days = new Set(modeDays(draftPreset.dataset.draftPreset, []));
-      renderAlarms();
-      return;
-    }
-    const scheduleToggle = event.target.closest('[data-schedule-toggle]');
-    if (scheduleToggle) {
-      const id = scheduleToggle.dataset.id;
-      openScheduleId = openScheduleId === id ? null : id;
-      if (openScheduleId) {
-        const pageSize = currentAlarmPageSize();
-        const index = state.alarms.findIndex((alarm) => alarm.id === id);
-        if (index >= 0) alarmPage = Math.floor(index / pageSize);
-      }
-      renderAlarms();
-      // If the open row is on another page, keep its schedule button reachable.
-      el('alarmList').querySelector(`[data-schedule-toggle][data-id="${CSS.escape(id)}"]`)?.focus({preventScroll:true});
-      return;
-    }
-    const liveDay = event.target.closest('[data-alarm-day]');
-    const livePreset = event.target.closest('[data-alarm-preset]');
-    if (liveDay || livePreset) {
-      const id = (liveDay ?? livePreset).dataset.id;
-      const current = stagedAlarm(id);
-      if (!current) return;
-      const day = Number(liveDay?.dataset.alarmDay);
-      const mode = livePreset?.dataset.alarmPreset;
-      const days = mode ? modeDays(mode,current.days) : current.days.includes(day) ? current.days.filter((d)=>d!==day) : [...current.days,day].sort();
-      scheduleAlarmChange(id,{days,schedule_mode: mode === 'workdays' || mode === 'weekends' ? mode : 'custom'},true);
-      const row = (liveDay ?? livePreset).closest('.alarm-live-row');
-      // A single selection is enough: return to the quiet, compact row.
-      openScheduleId = null;
-      renderAlarms();
-      return;
-    }
-    const button = event.target.closest('[data-action]');
-    if (!button || !state || busy) return;
-    const id = button.dataset.id;
-    const alarm = state.alarms.find((a) => a.id === id);
-    if (!alarm) return;
-    if (button.dataset.action === 'toggle') {
-      const current = stagedAlarm(id);
-      if (current) {
-        scheduleAlarmChange(id,{enabled:!current.enabled},true);
-        const row = button.closest('.alarm-live-row');
-        row?.classList.toggle('disabled', current.enabled);
-        button.classList.toggle('on',!current.enabled);
-        button.setAttribute('aria-checked',String(!current.enabled));
-      }
-    }
+    const button = event.target.closest('[data-action="toggle"]');
+    if (!button) return;
+    const current = stagedAlarm(button.dataset.id);
+    if (!current) return;
+    scheduleAlarmChange(current.id, {enabled:!current.enabled}, true);
+    button.classList.toggle('on', !current.enabled);
+    button.setAttribute('aria-checked', String(!current.enabled));
+    button.setAttribute('aria-label', `${current.enabled ? 'Включить' : 'Выключить'} будильник «${current.label}»`);
+  });
+
+  // One modal handles creation, editing, scheduling and explicit deletion.
+  el('alarmEditForm').addEventListener('submit', (event) => void saveAlarmEditor(event));
+  el('alarmEditCancel').addEventListener('click', () => closeAlarmEditor());
+  el('alarmEditClose').addEventListener('click', () => closeAlarmEditor());
+  el('alarmEditOverlay').addEventListener('click', (event) => {
+    if (event.target === el('alarmEditOverlay')) closeAlarmEditor();
+  });
+  el('alarmEditEnabled').addEventListener('click', () => {
+    if (!alarmModalDraft || alarmModalSaving) return;
+    alarmModalDraft.enabled = !alarmModalDraft.enabled;
+    renderAlarmModalChoices();
+  });
+  el('alarmEditPresets').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-edit-preset]');
+    if (!alarmModalDraft || alarmModalSaving || !button) return;
+    const preset = button.dataset.editPreset;
+    alarmModalDraft.days = new Set(modeDays(preset, []));
+    alarmModalDraft.schedule_mode = ['workdays','weekends'].includes(preset) ? preset : 'custom';
+    renderAlarmModalChoices();
+  });
+  el('alarmEditDays').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-edit-day]');
+    if (!alarmModalDraft || alarmModalSaving || !button) return;
+    const day = Number(button.dataset.editDay);
+    if (alarmModalDraft.days.has(day)) alarmModalDraft.days.delete(day);
+    else alarmModalDraft.days.add(day);
+    alarmModalDraft.schedule_mode = 'custom';
+    renderAlarmModalChoices();
+  });
+  el('alarmEditDelete').addEventListener('click', () => {
+    if (!alarmModalDraft?.id || alarmModalSaving) return;
+    const id = alarmModalDraft.id;
+    closeAlarmEditor();
+    void requestAlarmRemoval(id);
   });
   el('alarmPrev').addEventListener('click', () => { alarmPage--; renderAlarms(); });
   el('alarmNext').addEventListener('click', () => { alarmPage++; renderAlarms(); });
@@ -942,6 +1060,16 @@ function bindEvents() {
     clearTimeout(workDaysSaveTimer);
     workDaysSaveTimer = setTimeout(()=>void saveWorkDays(),270);
   });
+  el('backupExport').addEventListener('click', () => void exportBackup());
+  el('backupImport').addEventListener('click', () => {
+    if (backupCanProceed()) el('backupFile').click();
+  });
+  el('backupFile').addEventListener('change', async () => {
+    const file = el('backupFile').files?.[0];
+    try { if (file) await importBackupFile(file); }
+    finally { el('backupFile').value = ''; }
+  });
+  el('backupUndo').addEventListener('click', () => void undoBackupImport());
   el('importMelody').addEventListener('click', () => el('customAudioFile').click());
   el('customAudioFile').addEventListener('change', async () => {
     const file = el('customAudioFile').files?.[0];
@@ -975,12 +1103,14 @@ function bindEvents() {
 
 async function init() {
   bindEvents();
+  window.setInterval(refreshAlarmClock, 15000);
   if (!api || !listen) {
     return;
   }
   try {
     await listen('angel:state', (event) => update(event.payload));
     update(await api('get_state'));
+    await refreshBackupUndo();
   } catch (error) {
     toast(`Ошибка запуска: ${String(error)}`);
   }

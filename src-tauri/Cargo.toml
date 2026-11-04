@@ -1,6 +1,6 @@
 [package]
 name = "angeltime"
-version = "0.4.22"
+version = "0.4.28"
 description = "AngelTime — будильник, таймер и секундомер"
 authors = ["Trauriger Engel"]
 edition = "2021"

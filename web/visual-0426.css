@@ -1,0 +1,175 @@
+/* AngelTime v0.4.26 — Full Workspace.
+   Full-width, small consistent 12/8/4px spacing.
+   Visual only: alarm sorting, modal actions, backup/restore and Rust untouched. */
+:root{
+  --at-outer:12px;
+  --at-space:8px;
+  --at-tight:4px;
+  --at-inset:12px;
+}
+
+/* Remove the historical 1000–1088px centered workspace limit on ALL tabs. */
+.main{
+  width:100%;
+  min-width:0;
+  padding-inline:var(--at-outer)!important;
+}
+.top-navigation,.main>.tab-panel{
+  width:100%!important;
+  max-width:none!important;
+  margin-inline:0!important;
+  min-width:0;
+}
+.top-navigation{
+  margin-top:var(--at-outer)!important;
+  gap:var(--at-space)!important;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.top-navigation .nav-item{
+  height:44px!important;
+  min-height:44px!important;
+  padding:0 var(--at-inset)!important;
+  border-radius:8px!important;
+  font-size:13px;
+}
+.main>.tab-panel,#panel-alarm,#panel-timer,#panel-stopwatch,#panel-settings{
+  padding-top:var(--at-outer)!important;
+}
+
+/* The same compact rhythm around the alarm heading and the whole list. */
+#panel-alarm .alarm-toolbar{
+  min-height:42px;
+  gap:var(--at-space);
+  margin-bottom:var(--at-space)!important;
+}
+#panel-alarm .alarm-toolbar h1{
+  font-size:28px;
+  letter-spacing:-.6px;
+}
+#panel-alarm .alarm-toolbar-actions{gap:var(--at-space);}
+#panel-alarm .alarm-toolbar .btn{
+  height:38px;
+  min-height:38px;
+  padding:0 12px;
+  border-radius:8px;
+  font-size:12px;
+}
+#panel-alarm .alarm-list{
+  /* 20 rows at FHD, larger rows on tall monitors; paginate on short windows. */
+  --alarm-base-row-height:clamp(42px,calc((100dvh - 235px)/20),56px);
+  row-gap:var(--at-tight)!important;
+  grid-auto-rows:var(--alarm-base-row-height)!important;
+  min-width:0;
+}
+#panel-alarm .alarm-list .alarm-compact-row{
+  height:var(--alarm-base-row-height);
+  min-height:var(--alarm-base-row-height);
+  width:100%;
+  grid-template-columns:88px minmax(0,1.7fr) minmax(125px,.7fr) minmax(175px,.75fr) 46px 60px;
+  gap:var(--at-inset);
+  padding:0 var(--at-inset);
+  border-radius:8px;
+  background:#171719;
+  border-color:#34312e;
+}
+#panel-alarm .compact-time{font-size:18px;}
+#panel-alarm .compact-name{font-size:14px;font-weight:650;}
+#panel-alarm .compact-schedule{font-size:12px;}
+#panel-alarm .compact-next{font-size:12px;}
+#panel-alarm .compact-edit{
+  width:60px;
+  height:30px;
+  min-height:30px;
+  border-radius:7px;
+  font-size:11px;
+}
+#panel-alarm .alarm-compact-row .toggle{
+  width:40px;
+  height:22px;
+}
+#panel-alarm .alarm-compact-row .toggle::after{
+  width:16px;
+  height:16px;
+}
+#panel-alarm .alarm-compact-row .toggle.on::after{left:20px;}
+
+/* Unified outer and inner padding for the other three sections. */
+.main>.tab-panel .refined-section-head{margin-bottom:var(--at-outer)!important;}
+#panel-timer .timer-layout{
+  width:100%;
+  margin-top:var(--at-space)!important;
+}
+#panel-timer .timer-right,#panel-stopwatch .stopwatch-display{
+  padding:18px var(--at-inset)!important;
+  border-radius:8px!important;
+}
+#panel-timer .timer-left,
+#panel-settings .settings-v3 .settings-card{
+  padding:var(--at-inset)!important;
+  border-radius:8px!important;
+}
+#panel-timer .timer-progress{width:min(760px,92%);}
+#panel-timer .extra-timers-head{margin-top:var(--at-outer)!important;}
+#panel-timer .extra-timers-list{width:100%;}
+#panel-settings .settings-v3{
+  max-width:none!important;
+  width:100%;
+  margin-inline:0!important;
+  gap:var(--at-outer)!important;
+}
+#panel-settings .settings-v3 .settings-card{
+  min-width:0;
+}
+#panel-settings.tab-panel{
+  padding-bottom:var(--at-outer)!important;
+}
+
+/* Modal is intentionally centered, but uses the same modest padding/spacing. */
+.alarm-edit-overlay{padding:var(--at-outer);}
+.alarm-edit-dialog{
+  width:min(100%,520px);
+  padding:16px;
+  max-height:calc(100dvh - 2 * var(--at-outer));
+  border-radius:10px;
+}
+.alarm-dialog-fields{gap:var(--at-outer);}
+.alarm-dialog-actions{gap:var(--at-space);}
+
+@media(max-width:1100px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:78px minmax(0,1.6fr) minmax(108px,.7fr) minmax(135px,.9fr) 42px 58px;
+    gap:var(--at-space);
+  }
+  #panel-alarm .compact-time{font-size:17px;}
+  #panel-alarm .compact-name{font-size:13px;}
+  #panel-alarm .compact-next{font-size:11px;}
+  #panel-alarm .compact-edit{width:56px;}
+}
+@media(max-width:770px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:72px minmax(0,1fr) minmax(86px,.55fr) 40px 54px;
+    gap:var(--at-space);
+    padding:0 var(--at-space);
+  }
+  #panel-alarm .compact-next{display:none;}
+  #panel-alarm .compact-time{font-size:16px;}
+  #panel-alarm .compact-name{font-size:12px;}
+  #panel-alarm .compact-schedule{font-size:11px;}
+  #panel-alarm .compact-edit{width:54px;}
+  .top-navigation .nav-item{padding:0 5px!important;font-size:11px;}
+}
+@media(max-width:510px){
+  :root{--at-outer:8px;--at-space:6px;--at-inset:8px;}
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:58px minmax(0,1fr) 40px 47px;
+    gap:6px;
+  }
+  #panel-alarm .compact-schedule{display:none;}
+  #panel-alarm .compact-edit{width:47px;font-size:10px;}
+  #panel-alarm .alarm-toolbar h1{font-size:23px;}
+  #panel-alarm .add-alarm{min-width:0;}
+  .alarm-edit-dialog{padding:12px;}
+}
+@media(prefers-reduced-motion:reduce){
+  #panel-alarm .alarm-list .alarm-compact-row{transition:none!important;}
+}

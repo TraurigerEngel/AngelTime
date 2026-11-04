@@ -1,0 +1,65 @@
+/* AngelTime v0.4.28 — Two-column alarms.
+   Only card width and arrangement change. Existing row height, two-line
+   title/schedule, readable font sizes and modal editing are preserved. */
+#panel-alarm .alarm-list.two-columns:not(.is-empty){
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-rows:repeat(var(--at-column-rows,10),var(--alarm-base-row-height))!important;
+  grid-auto-flow:column!important;
+  grid-auto-rows:var(--alarm-base-row-height)!important;
+  column-gap:12px!important;
+  row-gap:var(--at-tight)!important;
+  align-content:start!important;
+  min-width:0;
+}
+/* The next-trigger indicator stays on the second line alongside the schedule. */
+#panel-alarm .alarm-list .alarm-compact-row{
+  grid-template-columns:90px minmax(0,1fr) 166px!important;
+  min-width:0;
+}
+#panel-alarm .alarm-list .compact-info{
+  min-width:0;
+}
+#panel-alarm .alarm-list .compact-meta{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  overflow:hidden;
+}
+#panel-alarm .alarm-list .compact-meta .compact-schedule{flex:0 1 auto;}
+#panel-alarm .alarm-list .compact-meta .compact-next{
+  display:inline;
+  flex:0 0 auto;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+@media(max-width:1320px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:80px minmax(0,1fr) 145px!important;
+    column-gap:11px!important;
+    padding:0 12px!important;
+  }
+  #panel-alarm .alarm-list .compact-actions{gap:9px;}
+  #panel-alarm .alarm-list .compact-edit{width:84px!important;}
+}
+@media(max-width:1199px){
+  #panel-alarm .alarm-list.two-columns:not(.is-empty){
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-auto-flow:row!important;
+    grid-template-rows:none!important;
+  }
+}
+@media(max-width:760px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:70px minmax(0,1fr) 128px!important;
+  }
+  #panel-alarm .alarm-list .compact-meta .compact-next{display:none;}
+}
+@media(max-width:510px){
+  #panel-alarm .alarm-list .alarm-compact-row{
+    grid-template-columns:59px minmax(0,1fr) 104px!important;
+  }
+}

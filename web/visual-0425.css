@@ -1,0 +1,131 @@
+/* AngelTime v0.4.25 — Compact Alarms. A restrained, utilitarian alarm list. */
+#panel-alarm {padding-top:18px;}
+#panel-alarm .alarm-toolbar {margin-bottom:9px;min-height:39px;}
+#panel-alarm .alarm-toolbar h1 {font-size:29px;font-weight:720;letter-spacing:-.7px;}
+#panel-alarm .alarm-toolbar .counter-pill {font-size:10px;padding:3px 7px;box-shadow:none;background:#1e1c19;}
+#panel-alarm .alarm-toolbar .btn {min-height:34px;height:34px;border-radius:7px;font-size:12px;padding:0 12px;box-shadow:none;}
+#panel-alarm .add-alarm {min-width:150px;}
+#panel-alarm .add-alarm .plus {font-size:14px;vertical-align:0;}
+#panel-alarm .alarm-list {
+  --alarm-base-row-height:42px;
+  --alarm-expanded-row-height:42px;
+  --alarm-inline-editor-height:0px;
+  row-gap:3px!important;
+  grid-auto-rows:42px!important;
+}
+#panel-alarm .alarm-list .alarm-compact-row {
+  box-sizing:border-box;
+  display:grid;
+  grid-template-columns:72px minmax(0,1fr) 136px 200px 44px 42px;
+  gap:8px;
+  align-items:center;
+  min-height:42px;height:42px;
+  padding:0 9px;
+  border:1px solid #2e2d2c;
+  border-left:2px solid #383735;
+  border-radius:5px;
+  background:#171719;
+  box-shadow:none;
+  transition:background .12s,border-color .12s;
+}
+#panel-alarm .alarm-list .alarm-compact-row:hover {transform:none;background:#1d1c1d;border-color:#45413a;box-shadow:none;}
+#panel-alarm .alarm-list .alarm-compact-row:focus-within {border-color:#958058;box-shadow:none;}
+#panel-alarm .alarm-list .alarm-compact-row.is-next {background:#201d17;border-color:#74603d;border-left-color:#e4bb71;box-shadow:none;}
+#panel-alarm .alarm-list .alarm-compact-row.is-next:hover {background:#272218;box-shadow:none;}
+#panel-alarm .alarm-list .alarm-compact-row.disabled {opacity:.65;background:#121214;border-color:#29292b;border-left-color:#29292b;}
+#panel-alarm .alarm-list .alarm-compact-row.disabled:hover {opacity:.9;background:#19191b;}
+#panel-alarm .compact-time {font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;color:#f4efe4;white-space:nowrap;}
+#panel-alarm .compact-name {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#eeeae2;font-size:12.5px;font-weight:600;}
+#panel-alarm .compact-schedule {min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#a49c90;font-size:11px;}
+#panel-alarm .compact-next {min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e9c782;font-size:11px;font-weight:650;}
+#panel-alarm .alarm-compact-row.disabled .compact-time,#panel-alarm .alarm-compact-row.disabled .compact-name {color:#aaa59e;}
+#panel-alarm .alarm-compact-row .toggle {width:37px;height:20px;justify-self:center;box-shadow:none;background:#29292d;border-color:#4b4742;}
+#panel-alarm .alarm-compact-row .toggle::after {width:14px;height:14px;left:2px;top:2px;background:#a39d93;}
+#panel-alarm .alarm-compact-row .toggle.on {background:#a8864b;border-color:#ba985b;box-shadow:none;}
+#panel-alarm .alarm-compact-row .toggle.on::after {left:19px;background:#fbf4e5;}
+#panel-alarm .compact-edit {width:41px;height:26px;min-height:26px;padding:0 3px;justify-self:end;font-size:10px;font-weight:650;color:#c3bdb3;background:transparent;border:1px solid #3b3935;border-radius:5px;}
+#panel-alarm .compact-edit:hover {background:#29251e;color:#edd39f;border-color:#7f6741;}
+#panel-alarm .page-nav .icon-btn {width:27px;height:27px;}
+#panel-alarm .empty {height:100%;min-height:80px;}
+
+/* Focused modal: all edits and scheduling happen here, never in list rows. */
+.alarm-edit-overlay {position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.70);}
+.alarm-edit-overlay.hidden {display:none!important;}
+.alarm-edit-dialog {box-sizing:border-box;width:min(100%,470px);max-height:calc(100vh - 32px);overflow-y:auto;padding:24px;background:#19191b;border:1px solid #514737;border-radius:10px;box-shadow:0 18px 58px rgba(0,0,0,.55);color:var(--ui-text);}
+.alarm-dialog-header {display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.alarm-dialog-header h2 {margin:0;font-size:20px;font-weight:720;letter-spacing:-.4px;}
+.alarm-dialog-header button {width:29px;height:29px;color:#c6bdae;font-size:21px;background:transparent;border:0;border-radius:5px;}
+.alarm-dialog-header button:hover {color:#fff;background:#292725;}
+#alarmEditHelp {margin:8px 0 18px;color:#9e9689;font-size:11px;line-height:1.45;}
+.alarm-dialog-fields {display:grid;grid-template-columns:112px minmax(0,1fr);gap:12px;margin-bottom:19px;}
+.alarm-dialog-fields label {display:flex;flex-direction:column;gap:7px;color:#c0b6a7;font-size:11px;font-weight:650;min-width:0;}
+.alarm-dialog-fields input {box-sizing:border-box;width:100%;height:39px;border-radius:6px;border:1px solid #49443a;background:#111113;color:#f4eddd;font-size:14px;font-weight:550;padding:0 11px;outline:none;}
+.alarm-dialog-fields input:focus {border-color:#caa967;box-shadow:0 0 0 1px rgba(202,169,103,.15);}
+#alarmEditTime {font-variant-numeric:tabular-nums;letter-spacing:.6px;font-size:17px;}
+.alarm-dialog-heading {font-size:12px;color:#ede6d8;font-weight:650;margin-bottom:10px;}
+.alarm-dialog-presets,.alarm-dialog-days {display:flex;align-items:center;flex-wrap:wrap;gap:6px;}
+.alarm-dialog-presets {margin-bottom:12px;}
+.alarm-dialog-days {margin-bottom:19px;}
+.alarm-dialog-presets button,.alarm-dialog-days button {height:31px;min-height:31px;padding:0 9px;border-radius:6px;border:1px solid #403b34;background:#222123;color:#c5bdb1;font-size:11px;font-weight:600;}
+.alarm-dialog-days button {min-width:38px;padding:0 6px;}
+.alarm-dialog-presets button[aria-pressed="true"],.alarm-dialog-days button[aria-pressed="true"] {background:#927445;border-color:#c4a163;color:#fff8e8;}
+.alarm-dialog-presets button:hover,.alarm-dialog-days button:hover {border-color:#97794c;}
+.alarm-dialog-switch {padding:13px 0;border-top:1px solid #302d2a;border-bottom:1px solid #302d2a;display:flex;justify-content:space-between;align-items:center;color:#ddd3c3;font-size:12px;font-weight:600;}
+.alarm-dialog-error {min-height:16px;margin:9px 0 1px;color:#edaaa1;font-size:11px;}
+.alarm-dialog-actions {display:flex;align-items:center;gap:8px;margin-top:15px;}
+.alarm-dialog-spacer {flex:1;}
+.alarm-dialog-actions .btn {min-height:36px;padding:0 13px;font-size:12px;box-shadow:none;}
+.alarm-dialog-delete {color:#daafa3;background:transparent;border-color:#6d4844;}
+.alarm-dialog-delete:hover {background:#352421;}
+@media(max-width:1100px) {
+  #panel-alarm .alarm-list .alarm-compact-row {grid-template-columns:67px minmax(0,1fr) 114px 155px 40px 42px;gap:6px;}
+  #panel-alarm .compact-time {font-size:15px;}
+  #panel-alarm .compact-next {font-size:10px;}
+}
+@media(max-width:770px) {
+  #panel-alarm .alarm-list .alarm-compact-row {grid-template-columns:62px minmax(0,1fr) 80px 39px 42px;gap:5px;padding:0 6px;}
+  #panel-alarm .compact-next {display:none;}
+  #panel-alarm .compact-schedule {font-size:10px;}
+  #panel-alarm .compact-name {font-size:11.5px;}
+  #panel-alarm .alarm-list .alarm-compact-row.is-next .compact-name::after {content:' · Далее';color:#d8b16f;}
+  #panel-alarm .alarm-toolbar h1 {font-size:25px;}
+}
+@media(max-width:500px) {
+  .alarm-dialog-fields {grid-template-columns:1fr;}
+  .alarm-edit-dialog {padding:18px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  #panel-alarm .alarm-list .alarm-compact-row {transition:none;}
+}
+
+/* Minimal treatment shared by all four tabs; no changes to feature layout logic. */
+body,.app-shell,.main {background:#0d0d0f!important;}
+.top-navigation {gap:7px;}
+.top-navigation .nav-item,
+.top-navigation .nav-item.active {
+  min-height:42px!important;height:42px!important;
+  border-radius:7px!important;
+  background:#171719!important;
+  box-shadow:none!important;
+  font-weight:650;
+}
+.top-navigation .nav-item.active {background:#262118!important;border-color:#7e663e!important;color:#ead2a0!important;}
+.top-navigation .nav-item:not(.active):hover {background:#202023!important;border-color:#575047!important;}
+.top-navigation .nav-item svg {display:none!important;}
+.refined-section-head h1 {font-size:30px;letter-spacing:-.5px;}
+.refined-section-head {margin-bottom:12px;}
+#panel-timer,#panel-stopwatch,#panel-settings {padding-top:18px;}
+#panel-timer .refined-eyebrow,#panel-stopwatch .refined-eyebrow {display:none;}
+#panel-timer .timer-right,#panel-stopwatch .stopwatch-display {
+  min-height:215px!important;padding:23px 20px!important;gap:12px!important;
+  background:#171719!important;border:1px solid #34312c!important;
+  border-radius:9px!important;box-shadow:none!important;
+}
+#panel-timer .timer-left,#panel-settings .settings-v3 .settings-card {
+  background:#171719!important;border-radius:9px!important;box-shadow:none!important;
+}
+#panel-timer .timer-left {min-height:116px!important;padding:16px 20px!important;}
+#panel-timer .actions .btn,#panel-stopwatch .stopwatch-actions .btn {box-shadow:none!important;}
+#panel-timer .presets button {border-radius:6px!important;box-shadow:none!important;}
+#panel-settings .settings-v3 .settings-card {box-shadow:none!important;}
+.btn-primary,.dialog-actions .btn-primary {box-shadow:none!important;}

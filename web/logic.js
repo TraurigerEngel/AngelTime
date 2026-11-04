@@ -32,20 +32,53 @@ export function timerValuesToSeconds(hours, minutes, seconds) {
   return total > 0 ? total : null;
 }
 
+export function nextAlarmOccurrence(alarm, now = new Date()) {
+  if (!alarm || !Number.isInteger(alarm.hour) || !Number.isInteger(alarm.minute)) return null;
+  const days = Array.isArray(alarm.days) ? alarm.days : [];
+  for (let offset = 0; offset < 8; offset++) {
+    const target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset, alarm.hour, alarm.minute);
+    if (target.getTime() <= now.getTime()) continue;
+    const weekday = (target.getDay() + 6) % 7;
+    if (days.length > 0 && !days.includes(weekday)) continue;
+    return target;
+  }
+  return null;
+}
+
 export function closestAlarm(alarms, now = new Date()) {
   let best = null;
   for (const alarm of alarms) {
-    if (!alarm.enabled) continue;
-    for (let offset = 0; offset < 8; offset++) {
-      const target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset, alarm.hour, alarm.minute);
-      if (target.getTime() <= now.getTime()) continue;
-      const weekday = (target.getDay() + 6) % 7;
-      if (alarm.days.length > 0 && !alarm.days.includes(weekday)) continue;
-      if (!best || target < best.when) best = {alarm, when: target};
-      break;
-    }
+    if (!alarm?.enabled) continue;
+    const when = nextAlarmOccurrence(alarm, now);
+    if (when && (!best || when < best.when)) best = {alarm, when};
   }
   return best;
+}
+
+export function sortAlarmsByNextTrigger(alarms, now = new Date()) {
+  if (!Array.isArray(alarms)) return [];
+  return alarms
+    .map((alarm, index) => ({
+      alarm,
+      index,
+      when: nextAlarmOccurrence(alarm, now),
+      enabled: Boolean(alarm?.enabled),
+    }))
+    .sort((a, b) => {
+      if (a.enabled !== b.enabled) return a.enabled ? -1 : 1;
+      if (a.enabled && b.enabled && a.when && b.when && a.when.getTime() !== b.when.getTime()) return a.when - b.when;
+      if (a.enabled && b.enabled && a.when && !b.when) return -1;
+      if (a.enabled && b.enabled && !a.when && b.when) return 1;
+      if (a.enabled && b.enabled) return a.index - b.index;
+      const hourDiff = (a.alarm?.hour ?? 0) - (b.alarm?.hour ?? 0);
+      if (hourDiff !== 0) return hourDiff;
+      const minuteDiff = (a.alarm?.minute ?? 0) - (b.alarm?.minute ?? 0);
+      if (minuteDiff !== 0) return minuteDiff;
+      const labelDiff = String(a.alarm?.label ?? '').localeCompare(String(b.alarm?.label ?? ''), 'ru');
+      if (labelDiff !== 0) return labelDiff;
+      return a.index - b.index;
+    })
+    .map(({alarm}) => alarm);
 }
 
 export function escapeHtml(text) {
